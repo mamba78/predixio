@@ -2,18 +2,17 @@ import StatsBar from "@/components/StatsBar";
 import MarketCard from "@/components/MarketCard";
 import CategoryTabs from "@/components/CategoryTabs";
 
-// Force dynamic rendering — no build-time fetch errors
+// Force dynamic rendering
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function Home() {
-  // BULLETPROOF FETCH — works locally AND on Vercel/Railway
-  const baseUrl =
-    typeof window === "undefined"
-      ? process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
-      : "";
+  // THIS LINE WORKS EVERYWHERE: localhost + Vercel + Railway
+  const url = process.env.NEXT_PUBLIC_VERCEL_URL
+    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+    : "http://localhost:3000";
 
-  const res = await fetch(`${baseUrl}/api/markets`, {
+  const res = await fetch(`${url}/api/markets`, {
     cache: "no-store",
   });
 
@@ -21,7 +20,6 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen">
-      {/* Hero Section */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-black pointer-events-none" />
         <div className="relative max-w-7xl mx-auto px-6 text-center">
@@ -35,7 +33,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Markets Grid */}
       <section className="max-w-7xl mx-auto px-6 -mt-10">
         <CategoryTabs />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-20">
@@ -45,7 +42,7 @@ export default async function Home() {
             ))
           ) : (
             <div className="col-span-full text-center py-32 text-gray-500 text-xl">
-              Loading live markets from Polymarket + Kalshi...
+              Loading live markets...
             </div>
           )}
         </div>
