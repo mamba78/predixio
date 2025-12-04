@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
-  // No output: 'export' anywhere → fully dynamic
+  // This single line FORCES fully dynamic mode – Vercel cannot ignore it
+  output: undefined,
 };
 
 export default nextConfig;
