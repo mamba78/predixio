@@ -8,11 +8,13 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "15.0.1",
-    "react": "19.0.0-rc",
-    "react-dom": "19.0.0-rc",
-    "tailwindcss": "3.4.0",
-    "autoprefixer": "10.4.20",
-    "postcss": "8.4.47"
+    "next": "15.0.3",
+    "react": "19.0.0-rc-f38c22b244-20241105",
+    "react-dom": "19.0.0-rc-f38c22b244-20241105"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.14",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47"
   }
 }
