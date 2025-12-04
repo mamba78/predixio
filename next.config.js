@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Remove output: 'export' — it breaks /api routes and dynamic pages
+  // Fully dynamic site — no static export
 };
 
 module.exports = nextConfig;
