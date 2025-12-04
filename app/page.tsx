@@ -3,9 +3,18 @@ import MarketCard from "@/components/MarketCard";
 import CategoryTabs from "@/components/CategoryTabs";
 import { Suspense } from "react";
 
+export const dynamic = 'force-dynamic';  // Forces dynamic rendering — no pre-render fetch errors
+
 export default async function Home() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || ""}/api/markets`, { next: { revalidate: 60 } });
-  const markets = res.ok ? await res.json() : [];
+  // Fetch markets dynamically (runs on each request, not build time)
+  const res = await fetch("http://localhost:3000/api/markets", { 
+    cache: 'no-store',  // No caching for real-time
+    next: { revalidate: 0 } 
+  });
+  let markets = [];
+  if (res.ok) {
+    markets = await res.json();
+  }
 
   return (
     <main className="min-h-screen">
@@ -27,10 +36,14 @@ export default async function Home() {
       <section className="max-w-7xl mx-auto px-6 -mt-10">
         <CategoryTabs />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          <Suspense fallback={<div>Loading markets...</div>}>
-            {markets.map((m: any, i: number) => (
-              <MarketCard key={i} market={m} />
-            ))}
+          <Suspense fallback={<div className="col-span-full text-center py-8 text-gray-500">Loading markets...</div>}>
+            {markets.length > 0 ? (
+              markets.map((m: any, i: number) => (
+                <MarketCard key={i} market={m} />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-8 text-gray-500">No markets available — check API keys</div>
+            )}
           </Suspense>
         </div>
       </section>
