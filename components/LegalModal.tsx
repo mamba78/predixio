@@ -1,23 +1,19 @@
 'use client';
 
-import { create } from "zustand";
+import { useEffect, useState } from "react";
 
 type ModalType = "terms" | "privacy" | "cookies" | "disclaimer" | null;
 
-interface ModalStore {
-  open: ModalType;
-  setOpen: (type: ModalType) => void;
-}
-
-const useModal = create<ModalStore>((set) => ({
-  open: null,
-  setOpen: (type) => set({ open: type }),
-}));
-
 export default function LegalModal() {
-  const { open, setOpen } = useModal();
+  const [open, setOpen] = useState<ModalType>(null);
 
-  const content = {
+  useEffect(() => {
+    const handler = (e: any) => setOpen(e.detail);
+    document.addEventListener("open-legal", handler);
+    return () => document.removeEventListener("open-legal", handler);
+  }, []);
+
+  const content: Record<string, { title: string; body: string }> = {
     terms: {
       title: "Terms of Service",
       body: "By using Predixio you agree that we are an independent aggregator of public data from Polymarket and others. We do not operate markets, accept bets, or hold funds. All information is for informational purposes only — not financial advice. You must be 18+.",
@@ -44,7 +40,7 @@ export default function LegalModal() {
         <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent mb-6">
           {content[open].title}
         </h2>
-        <p className="text-gray-300 leading-relaxed">{content[open].body}</p>
+        <p className="text-gray-300 leading-relaxed whitespace-pre-line">{content[open].body}</p>
         <button
           onClick={() => setOpen(null)}
           className="mt-8 px-8 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full hover:scale-105 transition"
@@ -55,6 +51,3 @@ export default function LegalModal() {
     </div>
   );
 }
-
-// Export the hook so footer can use it
-export { useModal };

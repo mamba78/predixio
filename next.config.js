@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  trailingSlash: true,
-  output: 'export',  // Forces static-like routing for pages
+  // Remove output: 'export' — it breaks /api routes and dynamic pages
 };
 
 module.exports = nextConfig;
