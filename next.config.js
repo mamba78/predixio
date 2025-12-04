@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  transpilePackages: [],
+  trailingSlash: true,
+  output: 'export',  // Forces static-like routing for pages
 };
 
 module.exports = nextConfig;

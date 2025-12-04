@@ -5,17 +5,14 @@ export const revalidate = 60;
 
 export async function GET() {
   try {
-    const response = await fetch(
-      "https://clob.polymarket.com/markets?active=true&closed=false&limit=100",
-      {
-        headers: { "User-Agent": "Predixio/1.0 (+https://predixio.vercel.app)" },
-        next: { revalidate: 60 },
-      }
-    );
+    const res = await fetch("https://clob.polymarket.com/markets?active=true&closed=false&limit=100", {
+      headers: { "User-Agent": "Predixio/1.0" },
+      next: { revalidate: 60 },
+    });
 
-    if (!response.ok) throw new Error("API error");
+    if (!res.ok) throw new Error("API error");
 
-    const data = await response.json();
+    const data = await res.json();
 
     const markets = data.data.map((m: any) => ({
       id: m.condition_id,
@@ -25,19 +22,14 @@ export async function GET() {
       yes_price: Number(m.tokens.find((t: any) => t.outcome === "Yes")?.price || 0.5).toFixed(3),
       no_price: Number(m.tokens.find((t: any) => t.outcome === "No")?.price || 0.5).toFixed(3),
       volume: Math.round(m.volume24Hours || 0),
-      volume24h: m.volume24Hours || 0,
       category: m.tags?.[0] || "Other",
       link: `https://polymarket.com/event/${m.slug}`,
-      ends_at: m.end_date || null,
     }));
 
-    markets.sort((a: any, b: any) => b.volume24h - a.volume24h);
+    markets.sort((a: any, b: any) => b.volume - a.volume);
 
     return NextResponse.json(markets);
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Unable to load markets right now. Please try again later." },
-      { status: 503 }
-    );
+  } catch {
+    return NextResponse.json({ error: "Markets temporarily unavailable" }, { status: 503 });
   }
 }
