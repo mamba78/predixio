@@ -1,8 +1,20 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: ["./app/**/*.{js,ts,jsx,tsx}"],
-  theme: { extend: {} },
+  darkMode: "class",
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        background: "#000000",
+        foreground: "#ffffff",
+        primary: "#00f5ff",    // electric cyan
+        accent: "#d700ff",     // neon purple
+        card: "#0a0a0a",
+        border: "#1a1a1a",
+      },
+    },
+  },
   plugins: [],
 };
 
