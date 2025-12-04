@@ -2,11 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-background text-foreground min-h-screen;
-  background: radial-gradient(circle at top right, #0a0022, #000000);
+@layer base {
+  body {
+    @apply bg-black text-white min-h-screen;
+    background: radial-gradient(circle at top right, #0a0022, #000000);
+  }
 }
 
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { @apply bg-black; }
-::-webkit-scrollbar-thumb { @apply bg-primary/30; }
+@layer components {
+  .hero-gradient {
+    background: linear-gradient(to right, #00f5ff, #d700ff);
+  }
+}

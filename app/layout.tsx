@@ -9,9 +9,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark scroll-smooth">
-      <body>
+      <body className="min-h-screen bg-black text-white">  {/* Added bg-black text-white */}
         {children}
-        <footer className="border-t border-border py-10 text-center text-sm text-gray-500">
+        <footer className="border-t border-gray-800 py-8 mt-20 text-center text-sm text-gray-500">
           <div className="flex justify-center gap-6 flex-wrap">
             <Link href="/legal/terms">Terms</Link>
             <Link href="/legal/privacy">Privacy</Link>

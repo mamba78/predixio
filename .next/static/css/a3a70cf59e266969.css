@@ -1,1 +1,0 @@
-@tailwind base;@tailwind components;@tailwind utilities;body{@apply bg-background text-foreground min-h-screen;background:radial-gradient(circle at top right,#0a0022,#000)}::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{@apply bg-black}::-webkit-scrollbar-thumb{@apply bg-primary/30}
