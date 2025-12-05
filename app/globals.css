@@ -13,4 +13,4 @@
   .hero-gradient {
     background: linear-gradient(to right, #00f5ff, #d700ff);
   }
-}
+}.mt-20 { margin-top: 0 !important; } * { scroll-margin-bottom: 100px; }
