@@ -12,16 +12,18 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
+    <html lang="en" className="dark scroll-smooth">
       <head>
         <script dangerouslySetInnerHTML={{ __html: `window.TronLink={disabled:true};` }} />
       </head>
-      <body className={`${inter.variable} font-sans antialiased min-h-screen bg-black text-white flex flex-col`}>
-        {/* Main content — grows to fill available space, pushes footer to bottom */}
-        <div className="flex-1">{children}</div>
+      <body className={`${inter.variable} font-sans antialiased bg-black text-white min-h-screen flex flex-col`}>
+        {/* Main content grows to push footer down */}
+        <main className="flex-1">{children}</main>
 
-        {/* Footer — no wrapper, no extra space, always at bottom */}
-        <ClientFooter />
+        {/* Sticky footer — always at bottom, no extra space */}
+        <div className="sticky bottom-0 w-full bg-black border-t border-gray-800 z-50">
+          <ClientFooter />
+        </div>
 
         <LegalModal />
       </body>
