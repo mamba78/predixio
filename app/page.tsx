@@ -30,10 +30,10 @@ export default function Home() {
       })
       .catch(() => {
         const fallback: Market[] = [
-          { title: "Will Bitcoin hit $100K by Dec 31, 2025?", platform: "Polymarket", yes_price: "0.72", no_price: "0.28", volume: 3800000, category: "Crypto" },
-          { title: "Trump wins 2028 election?", platform: "Polymarket", yes_price: "0.65", no_price: "0.35", volume: 2100000, category: "Politics" },
-          { title: "Ethereum above $5K in 2026?", platform: "Polymarket", yes_price: "0.41", no_price: "0.59", volume: 1500000, category: "Crypto" },
-          { title: "Apple foldable iPhone in 2026?", platform: "Polymarket", yes_price: "0.45", no_price: "0.55", volume: 800000, category: "Tech" },
+          { title: "Will Bitcoin hit $100K by Dec 31, 2025?", platform: "Polymarket", yes_price: "0.72", no_price: "0.28", volume: 3800000, category: "Crypto", link: "https://polymarket.com" },
+          { title: "Trump wins 2028 election?", platform: "Polymarket", yes_price: "0.65", no_price: "0.35", volume: 2100000, category: "Politics", link: "https://polymarket.com" },
+          { title: "Ethereum above $5K in 2026?", platform: "Polymarket", yes_price: "0.41", no_price: "0.59", volume: 1500000, category: "Crypto", link: "https://polymarket.com" },
+          { title: "Apple foldable iPhone in 2026?", platform: "Polymarket", yes_price: "0.45", no_price: "0.55", volume: 800000, category: "Tech", link: "https://polymarket.com" },
         ];
         setMarkets(fallback);
         setFiltered(fallback);
@@ -49,7 +49,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-      {/* Hero */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-black" />
         <div className="relative max-w-7xl mx-auto px-6 text-center">
@@ -63,53 +62,61 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Controls */}
       <section className="max-w-7xl mx-auto px-6 -mt-10">
-        <div className="flex flex-col md:flex-row gap-6 items-center justify-between mb-8">
+        {/* Search */}
+        <div className="flex justify-center mb-8">
           <input
             type="text"
             placeholder="Search markets..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-96 px-6 py-3 bg-gray-900 border border-gray-700 rounded-full focus:outline-none focus:border-cyan-500"
+            className="w-full max-w-2xl px-8 py-4 bg-gray-900 border border-gray-700 rounded-full text-lg focus:outline-none focus:border-cyan-500 transition"
           />
-
-          <div className="flex flex-wrap gap-3">
-            {["All", "Crypto", "Politics", "Sports", "Tech", "Entertainment"].map(cat => (
-              <button
-                key={cat}
-                onClick={() => setCategory(cat)}
-                className={`px-6 py-3 rounded-full font-medium transition ${category === cat ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-black" : "bg-gray-800 text-gray-400 hover:text-white"}`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex gap-4">
-            <button
-              onClick={() => setIsGrid(!isGrid)}
-              className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full hover:scale-105 transition"
-            >
-              {isGrid ? "List View" : "Grid View"}
-            </button>
-
-            <button
-              onClick={() => {
-                document.documentElement.classList.toggle("dark");
-              }}
-              className="px-6 py-3 bg-gray-800 rounded-full hover:bg-gray-700 transition"
-            >
-              {typeof document !== "undefined" && document.documentElement.classList.contains("dark") ? "☀️ Light" : "🌙 Dark"}
-            </button>
-          </div>
         </div>
 
-        {/* Markets */}
-        <div className={isGrid ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32" : "space-y-8 pb-32"}>
+        {/* Categories — on their own line, centered, elegant */}
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          {["All", "Crypto", "Politics", "Sports", "Tech", "Entertainment"].map(cat => (
+            <button
+              key={cat}
+              onClick={() => setCategory(cat)}
+              className={`px-8 py-3 rounded-full font-medium transition-all ${category === cat
+                ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-black shadow-lg"
+                : "bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Toggle Buttons — elegant, right-aligned */}
+        <div className="flex justify-end gap-4 mb-8">
+          <button
+            onClick={() => setIsGrid(!isGrid)}
+            className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-cyan-500/20 to-purple-600/20 border border-cyan-500/30 rounded-full text-cyan-400 font-medium hover:from-cyan-500/40 transition-all"
+          >
+            {isGrid ? "⬜ Grid" : "📜 List"}
+          </button>
+
+          <button
+            onClick={() => document.documentElement.classList.toggle("dark")}
+            className="flex items-center gap-3 px-6 py-3 bg-gray-800 rounded-full text-yellow-400 hover:bg-gray-700 transition"
+          >
+            {document.documentElement.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode"}
+          </button>
+        </div>
+
+        {/* Markets — grid or elegant single-line list */}
+        <div className={isGrid
+          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32"
+          : "space-y-6 pb-32"
+        }>
           {filtered.length > 0 ? (
             filtered.map((market, i) => (
-              <MarketCard key={i} market={market} />
+              <div key={i} className={!isGrid ? "flex items-center gap-8 bg-gray-900/50 border border-gray-800 rounded-2xl p-6" : ""}>
+                <MarketCard market={market} />
+              </div>
             ))
           ) : (
             <div className="text-center py-32 text-xl text-gray-400">No markets found</div>
