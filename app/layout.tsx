@@ -14,7 +14,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
       <head>
-        {/* Block TronLink/MetaMask from breaking hydration */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
