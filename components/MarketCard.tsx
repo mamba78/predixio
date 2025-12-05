@@ -1,18 +1,68 @@
+// components/MarketCard.tsx
 import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 
-export default function MarketCard({ market }: { market: any }) {
-  const yes = (Number(market.yes_price) * 100).toFixed(0);
-  const no = (Number(market.no_price) * 100).toFixed(0);
-  const volumeM = (market.volume / 1e6).toFixed(1);
+const formatVolume = (v: number) => {
+  if (v >= 1e9) return `$${(v / 1e9).toFixed(1)}B`;
+  if (v >= 1e6) return `$${(v / 1e6).toFixed(1)}M`;
+  return `$${v.toLocaleString()}`;
+};
 
+export default function MarketCard({ market, isGrid }: { market: any; isGrid: boolean }) {
+  const yes = (parseFloat(market.yes_price) * 100).toFixed(0);
+  const no = (parseFloat(market.no_price) * 100).toFixed(0);
+
+  if (!isGrid) {
+    // BEAUTIFUL ONE-ROW LIST VIEW
+    return (
+      <Link
+        href={market.link || "https://polymarket.com"}
+        target="_blank"
+        className="block bg-gray-900/70 backdrop-blur border border-gray-800 rounded-2xl p-5 hover:border-primary/60 hover:bg-gray-900/90 transition-all group"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
+              <span className="font-bold text-primary">{market.platform}</span>
+              <span>•</span>
+              <span>{market.category}</span>
+            </div>
+            <h3 className="font-semibold text-white group-hover:text-primary transition pr-4">
+              {market.title}
+            </h3>
+          </div>
+
+          <div className="flex items-center gap-6 text-sm">
+            <div className="text-center">
+              <div className="text-xl font-bold text-green-400">{yes}¢</div>
+              <div className="text-xs text-gray-500">YES</div>
+            </div>
+            <div className="text-center">
+              <div className="text-xl font-bold text-red-400">{no}¢</div>
+              <div className="text-xs text-gray-500">NO</div>
+            </div>
+            <div className="text-gray-400 hidden md:block">
+              {formatVolume(market.volume)}
+            </div>
+            <div className="px-6 py-3 bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full text-sm hover:scale-105 transition flex items-center gap-2">
+              Trade Now
+              <ExternalLink className="w-4 h-4" />
+            </div>
+          </div>
+        </div>
+      </Link>
+    );
+  }
+
+  // ORIGINAL GRID CARD (slightly improved)
   return (
-    <div className="group bg-gray-900/80 backdrop-blur border border-gray-800 rounded-2xl p-6 hover:border-cyan-500/50 transition-all hover:shadow-2xl hover:shadow-cyan-500/20">
-      <div className="flex justify-between items-start mb-4">
-        <span className="text-xs font-bold text-cyan-400 uppercase">{market.platform}</span>
-        <span className="text-xs text-gray-500">{market.category}</span>
+    <div className="group bg-gray-900/80 backdrop-blur border border-gray-800 rounded-2xl p-6 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20 transition-all">
+      <div className="flex justify-between text-xs mb-3">
+        <span className="font-bold text-primary uppercase">{market.platform}</span>
+        <span className="text-gray-500">{market.category}</span>
       </div>
 
-      <h3 className="text-lg font-bold text-white line-clamp-3 mb-4 group-hover:text-cyan-400 transition">
+      <h3 className="text-lg font-bold text-white line-clamp-3 mb-5 group-hover:text-primary transition">
         {market.title}
       </h3>
 
@@ -28,13 +78,11 @@ export default function MarketCard({ market }: { market: any }) {
       </div>
 
       <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-400">
-          Volume: ${volumeM}M
-        </div>
+        <span className="text-sm text-gray-400">{formatVolume(market.volume)}</span>
         <Link
           href={market.link || "https://polymarket.com"}
           target="_blank"
-          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full hover:scale-105 transition"
+          className="px-6 py-3 bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full text-sm hover:scale-105 transition"
         >
           Trade Now
         </Link>
