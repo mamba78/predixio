@@ -1,64 +1,39 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import StatsBar from "@/components/StatsBar";
 import MarketCard from "@/components/MarketCard";
+import CategoryTabs from "@/components/CategoryTabs";
+import { Suspense } from "react";
 
-type Market = {
-  title: string;
-  platform: string;
-  yes_price: string;
-  no_price: string;
-  volume: number;
-  category: string;
-  link?: string;
-};
+const SHOW_VIEW_TOGGLE = process.env.NEXT_PUBLIC_ENABLE_VIEW_TOGGLE !== "false";
+const SHOW_THEME_TOGGLE = process.env.NEXT_PUBLIC_ENABLE_THEME_TOGGLE !== "false";
 
-export default function Home() {
-  const [markets, setMarkets] = useState<Market[]>([]);
-  const [filtered, setFiltered] = useState<Market[]>([]);
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
-  const [isGrid, setIsGrid] = useState(true);
+export const dynamic = "force-dynamic";
 
-  useEffect(() => {
-    fetch("/api/markets")
-      .then(r => r.json())
-      .then(data => {
-        setMarkets(data);
-        setFiltered(data);
-      })
-      .catch(() => {
-        const fallback: Market[] = [
-          { title: "Will Bitcoin hit $100K by Dec 31, 2025?", platform: "Polymarket", yes_price: "0.72", no_price: "0.28", volume: 3800000, category: "Crypto" },
-          { title: "Trump wins 2028 election?", platform: "Polymarket", yes_price: "0.65", no_price: "0.35", volume: 2100000, category: "Politics" },
-          { title: "Ethereum above $5K in 2026?", platform: "Polymarket", yes_price: "0.41", no_price: "0.59", volume: 1500000, category: "Crypto" },
-          { title: "Apple foldable iPhone in 2026?", platform: "Polymarket", yes_price: "0.45", no_price: "0.55", volume: 800000, category: "Tech" },
-        ];
-        setMarkets(fallback);
-        setFiltered(fallback);
-      });
-  }, []);
-
-  useEffect(() => {
-    let result = markets;
-
-    if (search) {
-      result = result.filter(m => m.title.toLowerCase().includes(search.toLowerCase()));
-    }
-    if (category !== "All") {
-      result = result.filter(m => m.category === category);
-    }
-
-    setFiltered(result);
-  }, [search, category, markets]);
+async function MarketsGrid() {
+  const res = await fetch("https://predixio.vercel.app/api/markets", { cache: "no-store" });
+  const markets = res.ok ? await res.json() : [];
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-20" suppressHydrationWarning>
+      {markets.length > 0 ? (
+        markets.map((market: any, i: number) => (
+          <MarketCard key={i} market={market} />
+        ))
+      ) : (
+        <div className="col-span-full text-center py-32 text-xl text-gray-400">
+          Loading live markets...
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <main className="min-h-screen">
       <section className="relative py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 to-purple-900/20" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-black mb-20 pointer-events-none" />
         <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-8xl font-black bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-8xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             PREDIXIO
           </h1>
           <p className="text-2xl mt-6 text-gray-300">
@@ -69,46 +44,34 @@ export default function Home() {
       </section>
 
       <section className="max-w-7xl mx-auto px-6 -mt-10">
-        {/* Search + Category + Toggle */}
-        <div className="flex flex-col md:flex-row gap-6 mb-8 items-center justify-between">
-          <input
-            type="text"
-            placeholder="Search markets..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-96 px-6 py-3 bg-gray-900/80 border border-gray-700 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500"
-          />
-
-          <div className="flex gap-3 flex-wrap">
-            {["All", "Crypto", "Politics", "Sports", "Tech"].map(cat => (
-              <button
-                key={cat}
-                onClick={() => setCategory(cat)}
-                className={`px-6 py-3 rounded-full font-medium transition-all ${category === cat ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-black" : "bg-gray-800 text-gray-400 hover:text-white"}`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={() => setIsGrid(!isGrid)}
-            className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full shadow-lg hover:scale-105 transition"
-          >
-            {isGrid ? "List View" : "Grid View"}
-          </button>
+        {/* Categories on their own line */}
+        <div className="mb-6">
+          <CategoryTabs />
         </div>
 
-        {/* Markets */}
-        <div className={isGrid ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32" : "space-y-8 pb-32"}>
-          {filtered.length > 0 ? (
-            filtered.map((market, i) => (
-              <MarketCard key={i} market={market} />
-            ))
-          ) : (
-            <div className="text-center py-32 text-xl text-gray-400">No markets found</div>
+        {/* Toggle buttons — only show if enabled in .env.local */}
+        <div className="flex justify-end gap-4 mb-8">
+          {SHOW_VIEW_TOGGLE && (
+            <button
+              onClick={() => document.documentElement.dataset.view = document.documentElement.dataset.view === "list" ? "grid" : "list"}
+              className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full hover:scale-105 transition"
+            >
+              {document.documentElement.dataset.view === "list" ? "Grid View" : "List View"}
+            </button>
+          )}
+          {SHOW_THEME_TOGGLE && (
+            <button
+              onClick={() => document.documentElement.classList.toggle("dark")}
+              className="px-6 py-3 bg-gray-800 text-yellow-400 rounded-full hover:bg-gray-700 transition"
+            >
+              {document.documentElement.classList.contains("dark") ? "Light" : "Dark"}
+            </button>
           )}
         </div>
+
+        <Suspense fallback={<div className="text-center py-32 text-xl text-gray-400">Loading markets...</div>}>
+          <MarketsGrid />
+        </Suspense>
       </section>
     </main>
   );
