@@ -1,16 +1,115 @@
+/* app/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ==================== BASE STYLES ==================== */
 @layer base {
+  :root {
+    --bg-primary: #000000;
+    --text-primary: #ffffff;
+    --border-primary: #1a1a1a;
+    --card-bg: rgba(10, 10, 10, 0.8);
+  }
+
+  [data-theme="light"] {
+    --bg-primary: #f8f9fa;
+    --text-primary: #111111;
+    --border-primary: #e0e0e0;
+    --card-bg: rgba(255, 255, 255, 0.95);
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
   body {
-    @apply bg-black text-white min-h-screen;
-    background: radial-gradient(circle at top right, #0a0022, #000000);
+    @apply min-h-screen font-sans antialiased transition-colors duration-300;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    background-image: radial-gradient(circle at 20% 10%, rgba(0, 245, 255, 0.08), transparent 50%),
+                      radial-gradient(circle at 80% 80%, rgba(215, 0, 255, 0.06), transparent 50%);
+  }
+
+  /* Fix font rendering on all devices */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Safe area padding for mobile (iOS notch + Android) */
+  .pb-safe {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
   }
 }
 
+/* ==================== COMPONENTS ==================== */
 @layer components {
+  /* Hero gradient text */
   .hero-gradient {
-    background: linear-gradient(to right, #00f5ff, #d700ff);
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-black;
   }
-}.mt-20 { margin-top: 0 !important; } * { scroll-margin-bottom: 100px; }
+
+  /* Gradient buttons */
+  .btn-gradient {
+    @apply bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full hover:scale-105 transition-all shadow-lg hover:shadow-primary/50;
+  }
+
+  /* Card base */
+  .card {
+    @apply bg-[var(--card-bg)] border border-[var(--border-primary)] backdrop-blur-xl rounded-2xl transition-all duration-300;
+  }
+
+  /* Liquidity bar text readable in both themes */
+  .liquidity-text {
+    @apply font-bold text-white drop-shadow-md mix-blend-overlay;
+  }
+}
+
+/* ==================== UTILITIES ==================== */
+@layer utilities {
+  /* Remove default margin */
+  .mt-20 { margin-top: 0 !important; }
+
+  /* Scroll margin for anchor links */
+  * {
+    scroll-margin-top: 100px;
+    scroll-margin-bottom: 120px;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Text gradient */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+}
+
+/* ==================== DARK MODE OVERRIDES ==================== */
+.dark {
+  --bg-primary: #000000;
+  --text-primary: #ffffff;
+  --border-primary: #1f1f1f;
+  --card-bg: rgba(15, 15, 15, 0.9);
+}
+
+.dark .card {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Light mode card glow */
+[data-theme="light"] .card {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* Focus styles for accessibility */
+.focus-visible-ring:focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-black dark:ring-offset-black;
+}

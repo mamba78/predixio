@@ -1,17 +1,23 @@
 // components/CategoryTabs.tsx
 "use client";
 
-const categories = ["All", "Crypto", "Politics", "Sports", "Tech", "Entertainment"];
+import { useMemo } from "react";
 
 type Props = {
   active: string;
   onChange: (cat: string) => void;
+  markets: any[];
 };
 
-export default function CategoryTabs({ active, onChange }: Props) {
+export default function CategoryTabs({ active, onChange, markets }: Props) {
+  const availableCategories = useMemo(() => {
+    const cats = ["All", ...new Set(markets.map(m => m.category).filter(Boolean))];
+    return cats;
+  }, [markets]);
+
   return (
     <div className="flex flex-wrap justify-center gap-3 mb-12">
-      {categories.map((cat) => (
+      {availableCategories.map((cat) => (
         <button
           key={cat}
           onClick={() => onChange(cat)}
