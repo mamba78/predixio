@@ -20,7 +20,6 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [isGrid, setIsGrid] = useState(true);
-  const [sortBy, setSortBy] = useState("volume");
 
   useEffect(() => {
     fetch("/api/markets")
@@ -42,18 +41,11 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    let result = [...markets];
-
+    let result = markets;
     if (search) result = result.filter(m => m.title.toLowerCase().includes(search.toLowerCase()));
     if (category !== "All") result = result.filter(m => m.category === category);
-
-    // Sorting
-    if (sortBy === "volume") result.sort((a, b) => b.volume - a.volume);
-    if (sortBy === "newest") result.sort((a, b) => b.volume - a.volume); // placeholder
-    if (sortBy === "alpha") result.sort((a, b) => a.title.localeCompare(b.title));
-
     setFiltered(result);
-  }, [search, category, sortBy, markets]);
+  }, [search, category, markets]);
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -71,27 +63,16 @@ export default function Home() {
       </section>
 
       <section className="max-w-7xl mx-auto px-6 -mt-10">
-        {/* Search + Sort + Toggle */}
-        <div className="flex flex-col lg:flex-row gap-6 items-center justify-between mb-8">
+        <div className="flex flex-col md:flex-row gap-6 items-center justify-between mb-8">
           <input
             type="text"
             placeholder="Search markets..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full lg:w-96 px-8 py-4 bg-gray-900 border border-gray-700 rounded-full text-lg focus:outline-none focus:border-cyan-500 transition"
+            className="w-full md:w-96 px-8 py-4 bg-gray-900 border border-gray-700 rounded-full text-lg focus:outline-none focus:border-cyan-500 transition"
           />
 
           <div className="flex gap-4">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="px-6 py-4 bg-gray-900 border border-gray-700 rounded-full text-white focus:outline-none"
-            >
-              <option value="volume">Sort by Volume</option>
-              <option value="newest">Sort by Newest</option>
-              <option value="alpha">Sort by Name</option>
-            </select>
-
             <button
               onClick={() => setIsGrid(!isGrid)}
               className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full hover:scale-105 transition"
@@ -100,15 +81,18 @@ export default function Home() {
             </button>
 
             <button
-              onClick={() => document.documentElement.classList.toggle("dark")}
+              onClick={() => {
+                if (typeof document !== "undefined") {
+                  document.documentElement.classList.toggle("dark");
+                }
+              }}
               className="px-8 py-4 bg-gray-800 rounded-full hover:bg-gray-700 transition"
             >
-              {document.documentElement.classList.contains("dark") ? "Light" : "Dark"}
+              {typeof document !== "undefined" && document.documentElement.classList.contains("dark") ? "Light" : "Dark"}
             </button>
           </div>
         </div>
 
-        {/* Categories */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           {["All", "Crypto", "Politics", "Sports", "Tech", "Entertainment"].map(cat => (
             <button
@@ -124,7 +108,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Markets */}
         <div className={isGrid ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32" : "space-y-8 pb-32"}>
           {filtered.length > 0 ? (
             filtered.map((market, i) => (
