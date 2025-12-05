@@ -20,7 +20,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [isGrid, setIsGrid] = useState(true);
-  const [isDark, setIsDark] = useState(true);
+  const [sortBy, setSortBy] = useState("volume");
 
   useEffect(() => {
     fetch("/api/markets")
@@ -43,15 +43,17 @@ export default function Home() {
 
   useEffect(() => {
     let result = [...markets];
+
     if (search) result = result.filter(m => m.title.toLowerCase().includes(search.toLowerCase()));
     if (category !== "All") result = result.filter(m => m.category === category);
-    setFiltered(result);
-  }, [search, category, markets]);
 
-  useEffect(() => {
-    if (isDark) document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
-  }, [isDark]);
+    // SORTING — WORKS
+    if (sortBy === "volume") result.sort((a, b) => b.volume - a.volume);
+    if (sortBy === "yes") result.sort((a, b) => Number(b.yes_price) - Number(a.yes_price));
+    if (sortBy === "alpha") result.sort((a, b) => a.title.localeCompare(b.title));
+
+    setFiltered(result);
+  }, [search, category, sortBy, markets]);
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -79,6 +81,18 @@ export default function Home() {
           />
 
           <div className="flex gap-4">
+            {/* SORTING */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-6 py-4 bg-gray-900 border border-gray-700 rounded-full text-white focus:outline-none"
+            >
+              <option value="volume">Volume</option>
+              <option value="yes">Yes Price</option>
+              <option value="alpha">Name</option>
+            </select>
+
+            {/* GRID/LIST */}
             <button
               onClick={() => setIsGrid(!isGrid)}
               className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full hover:scale-105 transition"
@@ -86,15 +100,17 @@ export default function Home() {
               {isGrid ? "List View" : "Grid View"}
             </button>
 
+            {/* DARK/LIGHT */}
             <button
-              onClick={() => setIsDark(!isDark)}
+              onClick={() => document.documentElement.classList.toggle("dark")}
               className="px-8 py-4 bg-gray-800 rounded-full hover:bg-gray-700 transition"
             >
-              {isDark ? "Light" : "Dark"}
+              {typeof document !== "undefined" && document.documentElement.classList.contains("dark") ? "Light" : "Dark"}
             </button>
           </div>
         </div>
 
+        {/* CATEGORIES */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           {["All", "Crypto", "Politics", "Sports", "Tech", "Entertainment"].map(cat => (
             <button
@@ -107,6 +123,7 @@ export default function Home() {
           ))}
         </div>
 
+        {/* MARKETS */}
         <div className={isGrid ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32" : "space-y-8 pb-32"}>
           {filtered.length > 0 ? (
             filtered.map((market, i) => (
