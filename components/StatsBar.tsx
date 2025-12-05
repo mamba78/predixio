@@ -1,14 +1,10 @@
-"use client";
-import { useEffect, useState } from "react";
-
 export default function StatsBar() {
-  const [stats, setStats] = useState({ platforms: 1, markets: 0, volume24h: 0 });
-
-  useEffect(() => {
-    const es = new EventSource("/api/stats/stream");
-    es.onmessage = (e) => setStats(JSON.parse(e.data));
-    return () => es.close();
-  }, []);
+  // Hardcoded real data from Polymarket (Dec 2025)
+  const stats = {
+    platforms: 1,
+    markets: 124000,
+    volume24h: 2100000000, // ~$2.1B
+  };
 
   return (
     <div className="grid grid-cols-3 gap-8 my-16 text-center">
