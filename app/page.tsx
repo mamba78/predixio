@@ -1,22 +1,29 @@
-'use client';
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import StatsBar from "@/components/StatsBar";
 import MarketCard from "@/components/MarketCard";
 import CategoryTabs from "@/components/CategoryTabs";
 
-export const dynamic = "force-dynamic";
+type Market = {
+  title: string;
+  platform: string;
+  yes_price: string;
+  no_price: string;
+  volume: number;
+  category: string;
+  link: string;
+};
 
 export default function Home() {
-  const [markets, setMarkets] = useState([]);
+  const [markets, setMarkets] = useState<Market[]>([]);
 
   useEffect(() => {
     fetch("/api/markets")
       .then(r => r.json())
       .then(data => setMarkets(data))
       .catch(() => {
-        // Fallback if API fails
+        // Guaranteed fallback — always shows markets
         setMarkets([
           { title: "Will Bitcoin hit $100K by Dec 31, 2025?", platform: "Polymarket", yes_price: "0.72", no_price: "0.28", volume: 3800000, category: "Crypto", link: "https://polymarket.com" },
           { title: "Trump wins 2028 election?", platform: "Polymarket", yes_price: "0.65", no_price: "0.35", volume: 2100000, category: "Politics", link: "https://polymarket.com" },
@@ -27,7 +34,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-black text-white">
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-black" />
         <div className="relative max-w-7xl mx-auto px-6 text-center">
@@ -45,7 +52,7 @@ export default function Home() {
         <CategoryTabs />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-20">
           {markets.length > 0 ? (
-            markets.map((market: any, i: number) => (
+            markets.map((market, i) => (
               <MarketCard key={i} market={market} />
             ))
           ) : (
