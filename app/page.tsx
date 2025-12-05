@@ -1,37 +1,31 @@
+"use client";
+
+import { useState, useEffect, Suspense } from "react";
 import StatsBar from "@/components/StatsBar";
 import MarketCard from "@/components/MarketCard";
 import CategoryTabs from "@/components/CategoryTabs";
-import { Suspense } from "react";
 
-const SHOW_VIEW_TOGGLE = process.env.NEXT_PUBLIC_ENABLE_VIEW_TOGGLE !== "false";
-const SHOW_THEME_TOGGLE = process.env.NEXT_PUBLIC_ENABLE_THEME_TOGGLE !== "false";
-
-export const dynamic = "force-dynamic";
-
-async function MarketsGrid() {
-  const res = await fetch("https://predixio.vercel.app/api/markets", { cache: "no-store" });
-  const markets = res.ok ? await res.json() : [];
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-20" suppressHydrationWarning>
-      {markets.length > 0 ? (
-        markets.map((market: any, i: number) => (
-          <MarketCard key={i} market={market} />
-        ))
-      ) : (
-        <div className="col-span-full text-center py-32 text-xl text-gray-400">
-          Loading live markets...
-        </div>
-      )}
-    </div>
-  );
-}
+const fallbackMarkets = [
+  { title: "Will Bitcoin hit $100K by Dec 31, 2025?", platform: "Polymarket", yes_price: "0.72", no_price: "0.28", volume: 3800000, category: "Crypto", link: "https://polymarket.com" },
+  { title: "Trump wins 2028 election?", platform: "Polymarket", yes_price: "0.65", no_price: "0.35", volume: 2100000, category: "Politics", link: "https://polymarket.com" },
+  { title: "Ethereum above $5K in 2026?", platform: "Polymarket", yes_price: "0.41", no_price: "0.59", volume: 1500000, category: "Crypto", link: "https://polymarket.com" },
+  { title: "Apple foldable iPhone in 2026?", platform: "Polymarket", yes_price: "0.45", no_price: "0.55", volume: 800000, category: "Tech", link: "https://polymarket.com" },
+];
 
 export default function Home() {
+  const [markets, setMarkets] = useState(fallbackMarkets);
+
+  useEffect(() => {
+    fetch("/api/markets")
+      .then(r => r.json())
+      .then(setMarkets)
+      .catch(() => setMarkets(fallbackMarkets));
+  }, []);
+
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-black text-white">
       <section className="relative py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-black mb-20 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-black" />
         <div className="relative max-w-7xl mx-auto px-6 text-center">
           <h1 className="text-8xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             PREDIXIO
@@ -44,34 +38,12 @@ export default function Home() {
       </section>
 
       <section className="max-w-7xl mx-auto px-6 -mt-10">
-        {/* Categories on their own line */}
-        <div className="mb-6">
-          <CategoryTabs />
+        <CategoryTabs />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-20">
+          {markets.map((market, i) => (
+            <MarketCard key={i} market={market} />
+          ))}
         </div>
-
-        {/* Toggle buttons — only show if enabled in .env.local */}
-        <div className="flex justify-end gap-4 mb-8">
-          {SHOW_VIEW_TOGGLE && (
-            <button
-              onClick={() => document.documentElement.dataset.view = document.documentElement.dataset.view === "list" ? "grid" : "list"}
-              className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full hover:scale-105 transition"
-            >
-              {document.documentElement.dataset.view === "list" ? "Grid View" : "List View"}
-            </button>
-          )}
-          {SHOW_THEME_TOGGLE && (
-            <button
-              onClick={() => document.documentElement.classList.toggle("dark")}
-              className="px-6 py-3 bg-gray-800 text-yellow-400 rounded-full hover:bg-gray-700 transition"
-            >
-              {document.documentElement.classList.contains("dark") ? "Light" : "Dark"}
-            </button>
-          )}
-        </div>
-
-        <Suspense fallback={<div className="text-center py-32 text-xl text-gray-400">Loading markets...</div>}>
-          <MarketsGrid />
-        </Suspense>
       </section>
     </main>
   );
