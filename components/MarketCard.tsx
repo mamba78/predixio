@@ -1,6 +1,5 @@
 // components/MarketCard.tsx
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
 
 const formatVolume = (v: number) => {
   if (v >= 1e9) return `$${(v / 1e9).toFixed(1)}B`;
@@ -13,12 +12,12 @@ export default function MarketCard({ market, isGrid }: { market: any; isGrid: bo
   const no = (parseFloat(market.no_price) * 100).toFixed(0);
 
   if (!isGrid) {
-    // BEAUTIFUL ONE-ROW LIST VIEW
+    // LIST VIEW — beautiful one-row
     return (
       <Link
         href={market.link || "https://polymarket.com"}
         target="_blank"
-        className="block bg-gray-900/70 backdrop-blur border border-gray-800 rounded-2xl p-5 hover:border-primary/60 hover:bg-gray-900/90 transition-all group"
+        className="block bg-gray-900/70 border border-gray-800 rounded-2xl p-5 hover:border-primary/60 hover:bg-gray-900/90 transition-all group"
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex-1 min-w-0">
@@ -27,7 +26,7 @@ export default function MarketCard({ market, isGrid }: { market: any; isGrid: bo
               <span>•</span>
               <span>{market.category}</span>
             </div>
-            <h3 className="font-semibold text-white group-hover:text-primary transition pr-4">
+            <h3 className="font-semibold text-white group-hover:text-primary transition">
               {market.title}
             </h3>
           </div>
@@ -44,9 +43,8 @@ export default function MarketCard({ market, isGrid }: { market: any; isGrid: bo
             <div className="text-gray-400 hidden md:block">
               {formatVolume(market.volume)}
             </div>
-            <div className="px-6 py-3 bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full text-sm hover:scale-105 transition flex items-center gap-2">
+            <div className="px-6 py-3 bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full text-sm hover:scale-105 transition">
               Trade Now
-              <ExternalLink className="w-4 h-4" />
             </div>
           </div>
         </div>
@@ -54,9 +52,9 @@ export default function MarketCard({ market, isGrid }: { market: any; isGrid: bo
     );
   }
 
-  // ORIGINAL GRID CARD (slightly improved)
+  // GRID VIEW — clean and elegant
   return (
-    <div className="group bg-gray-900/80 backdrop-blur border border-gray-800 rounded-2xl p-6 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20 transition-all">
+    <div className="group bg-gray-900/80 border border-gray-800 rounded-2xl p-6 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20 transition-all">
       <div className="flex justify-between text-xs mb-3">
         <span className="font-bold text-primary uppercase">{market.platform}</span>
         <span className="text-gray-500">{market.category}</span>
