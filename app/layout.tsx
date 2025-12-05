@@ -16,12 +16,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: `window.TronLink={disabled:true};` }} />
       </head>
-      <body className={`${inter.variable} font-sans antialiased bg-black text-white min-h-screen flex flex-col`}>
-        {/* Main content — grows to fill all available space */}
-        <div className="flex-1">{children}</div>
+      <body className={`${inter.variable} font-sans antialiased bg-black text-white min-h-screen flex flex-col relative`}>
+        {/* Main content — takes all space except footer height */}
+        <div className="flex-1 pb-20">{children}</div>
 
-        {/* Footer — pushed to bottom by flex-1, no extra space */}
-        <ClientFooter />
+        {/* Fixed footer — always at bottom, no extra space, covers content when scrolling */}
+        <div className="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-800 z-50">
+          <ClientFooter />
+        </div>
 
         <LegalModal />
       </body>
