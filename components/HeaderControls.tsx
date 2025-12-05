@@ -4,30 +4,44 @@ import { useState } from "react";
 
 const categories = ["All", "Politics", "Crypto", "Sports", "Entertainment", "Economics", "Climate"];
 
-export default function HeaderControls({ onCategory }: { onCategory: (cat: string) => void }) {
-  const [view, setView] = useState<"grid" | "list">("grid");
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+export default function HeaderControls({ onSearch, onCategory }: { onSearch: (q: string) => void; onCategory: (cat: string) => void }) {
+  const [search, setSearch] = useState("");
+  const [activeCat, setActiveCat] = useState("All");
+
+  const handleCategory = (cat: string) => {
+    setActiveCat(cat);
+    onCategory(cat);
+  };
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-      <div className="flex flex-wrap gap-2">
+    <div className="flex flex-col md:flex-row gap-6 mb-8">
+      {/* Search */}
+      <input
+        type="text"
+        placeholder="Search markets..."
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          onSearch(e.target.value);
+        }}
+        className="w-full md:w-96 px-6 py-3 bg-gray-900/80 border border-gray-700 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition"
+      />
+
+      {/* Categories */}
+      <div className="flex flex-wrap gap-3">
         {categories.map((cat) => (
           <button
             key={cat}
-            onClick={() => onCategory(cat)}
-            className="px-4 py-2 rounded-full text-sm font-medium bg-gray-800 hover:bg-cyan-500/20 transition"
+            onClick={() => handleCategory(cat)}
+            className={`px-6 py-3 rounded-full font-medium transition-all ${
+              activeCat === cat
+                ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-black shadow-lg"
+                : "bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700"
+            }`}
           >
             {cat}
           </button>
         ))}
-      </div>
-      <div className="flex gap-4">
-        <button onClick={() => setView(view === "grid" ? "list" : "grid")} className="text-gray-400 hover:text-white">
-          {view === "grid" ? "List" : "Grid"} View
-        </button>
-        <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="text-gray-400 hover:text-white">
-          {theme === "dark" ? "Light" : "Dark"} Mode
-        </button>
       </div>
     </div>
   );

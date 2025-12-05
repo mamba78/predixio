@@ -1,28 +1,34 @@
 import StatsBar from "@/components/StatsBar";
 import MarketCard from "@/components/MarketCard";
-import CategoryTabs from "@/components/CategoryTabs";
-import ViewToggle from "@/components/ViewToggle";
+import HeaderControls from "@/components/HeaderControls";
 import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
-async function MarketsGrid() {
+async function MarketsGrid({ search = "", category = "All" }: { search?: string; category?: string }) {
   const res = await fetch("https://predixio.vercel.app/api/markets", { cache: "no-store" });
-  const markets = res.ok ? await res.json() : [];
+  let markets = res.ok ? await res.json() : [];
+
+  // Filter by search
+  if (search) {
+    const q = search.toLowerCase();
+    markets = markets.filter((m: any) => m.title.toLowerCase().includes(q));
+  }
+
+  // Filter by category
+  if (category !== "All") {
+    markets = markets.filter((m: any) => m.category === category);
+  }
 
   return (
-    <div 
-      data-view="grid"
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 pb-32 data-[view=list]:flex data-[view=list]:flex-col data-[view=list]:gap-8"
-      suppressHydrationWarning
-    >
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 pb-32">
       {markets.length > 0 ? (
         markets.map((market: any, i: number) => (
           <MarketCard key={i} market={market} />
         ))
       ) : (
         <div className="col-span-full text-center py-32 text-xl text-gray-400">
-          Loading live markets...
+          No markets found
         </div>
       )}
     </div>
@@ -46,12 +52,9 @@ export default function Home() {
       </section>
 
       <section className="max-w-7xl mx-auto px-6 -mt-10">
-        <div className="flex justify-between items-center mb-8">
-          <CategoryTabs />
-          <ViewToggle />
-        </div>
-        <Suspense fallback={<div className="text-center py-32 text-xl text-gray-400">Loading markets...</div>}>
-          <MarketsGrid />
+        <Suspense fallback={<div className="text-center py-32 text-xl text-gray-400">Loading...</div>}>
+          <HeaderControls onSearch={() => {}} onCategory={() => {}} />
+          <MarketsGrid search="" category="All" />
         </Suspense>
       </section>
     </main>
