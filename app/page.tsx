@@ -18,6 +18,7 @@ export default function Home() {
   const [markets, setMarkets] = useState<Market[]>([]);
   const [filtered, setFiltered] = useState<Market[]>([]);
   const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
   const [sortBy, setSortBy] = useState("volume");
 
   useEffect(() => {
@@ -42,16 +43,15 @@ export default function Home() {
   useEffect(() => {
     let result = [...markets];
     if (search) result = result.filter(m => m.title.toLowerCase().includes(search.toLowerCase()));
+    if (category !== "All") result = result.filter(m => m.category === category);
 
-    // Sorting
     if (sortBy === "volume") result.sort((a, b) => b.volume - a.volume);
     if (sortBy === "yes") result.sort((a, b) => Number(b.yes_price) - Number(a.yes_price));
     if (sortBy === "alpha") result.sort((a, b) => a.title.localeCompare(b.title));
 
     setFiltered(result);
-  }, [search, sortBy, markets]);
+  }, [search, category, sortBy, markets]);
 
-  // Get available categories
   const availableCategories = ["All", ...new Set(markets.map(m => m.category))];
 
   return (
@@ -70,7 +70,6 @@ export default function Home() {
       </section>
 
       <section className="max-w-7xl mx-auto px-6 -mt-10">
-        {/* Search + Sort */}
         <div className="flex flex-col lg:flex-row gap-6 items-center justify-between mb-8">
           <input
             type="text"
@@ -84,23 +83,22 @@ export default function Home() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-6 py-4 bg-gray-900 border border-gray-700 rounded-full text-white focus:outline-none"
+              className="px-6 py-4 bg-gray-900 border border-gray-700 rounded-full text-white"
             >
-              <option value="volume">Volume ↓</option>
-              <option value="yes">Yes Price ↓</option>
-              <option value="alpha">Name A-Z</option>
+              <option value="volume">Volume</option>
+              <option value="yes">Yes Price</option>
+              <option value="alpha">Name</option>
             </select>
 
             <button
               onClick={() => document.documentElement.classList.toggle("dark")}
               className="px-6 py-4 bg-gray-800 rounded-full hover:bg-gray-700 transition"
             >
-              {document.documentElement.classList.contains("dark") ? "☀️ Light" : "🌙 Dark"}
+              {document.documentElement.classList.contains("dark") ? "Light" : "Dark"}
             </button>
           </div>
         </div>
 
-        {/* Categories — only show available ones */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           {availableCategories.map(cat => (
             <button
@@ -116,7 +114,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Markets */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32">
           {filtered.length > 0 ? (
             filtered.map((market, i) => (
