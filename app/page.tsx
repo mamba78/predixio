@@ -13,12 +13,12 @@ async function MarketsGrid() {
   return (
     <div 
       data-view="grid"
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-32 data-[view=list]:grid-cols-1 data-[view=list]:space-y-6"
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 pb-32 data-[view=list]:grid-cols-1 data-[view=list]:space-y-8"
       suppressHydrationWarning
     >
       {markets.length > 0 ? (
         markets.map((market: any, i: number) => (
-          <div key={i} className="data-[view=list]:flex data-[view=list]:gap-6">
+          <div key={i} className="data-[view=list]:flex data-[view=list]:items-start data-[view=list]:gap-8">
             <MarketCard market={market} />
           </div>
         ))
