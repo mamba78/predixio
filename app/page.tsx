@@ -30,10 +30,10 @@ export default function Home() {
       })
       .catch(() => {
         const fallback: Market[] = [
-          { title: "Will Bitcoin hit $100K by Dec 31, 2025?", platform: "Polymarket", yes_price: "0.72", no_price: "0.28", volume: 3800000, category: "Crypto", link: "https://polymarket.com" },
-          { title: "Trump wins 2028 election?", platform: "Polymarket", yes_price: "0.65", no_price: "0.35", volume: 2100000, category: "Politics", link: "https://polymarket.com" },
-          { title: "Ethereum above $5K in 2026?", platform: "Polymarket", yes_price: "0.41", no_price: "0.59", volume: 1500000, category: "Crypto", link: "https://polymarket.com" },
-          { title: "Apple foldable iPhone in 2026?", platform: "Polymarket", yes_price: "0.45", no_price: "0.55", volume: 800000, category: "Tech", link: "https://polymarket.com" },
+          { title: "Will Bitcoin hit $100K by Dec 31, 2025?", platform: "Polymarket", yes_price: "0.72", no_price: "0.28", volume: 3800000, category: "Crypto" },
+          { title: "Trump wins 2028 election?", platform: "Polymarket", yes_price: "0.65", no_price: "0.35", volume: 2100000, category: "Politics" },
+          { title: "Ethereum above $5K in 2026?", platform: "Polymarket", yes_price: "0.41", no_price: "0.59", volume: 1500000, category: "Crypto" },
+          { title: "Apple foldable iPhone in 2026?", platform: "Polymarket", yes_price: "0.45", no_price: "0.55", volume: 800000, category: "Tech" },
         ];
         setMarkets(fallback);
         setFiltered(fallback);
@@ -49,6 +49,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black text-white">
+      {/* Hero */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-black" />
         <div className="relative max-w-7xl mx-auto px-6 text-center">
@@ -62,6 +63,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Controls */}
       <section className="max-w-7xl mx-auto px-6 -mt-10">
         <div className="flex flex-col md:flex-row gap-6 items-center justify-between mb-8">
           <input
@@ -93,14 +95,17 @@ export default function Home() {
             </button>
 
             <button
-              onClick={() => document.documentElement.classList.toggle("dark")}
+              onClick={() => {
+                document.documentElement.classList.toggle("dark");
+              }}
               className="px-6 py-3 bg-gray-800 rounded-full hover:bg-gray-700 transition"
             >
-              {document.documentElement.classList.contains("dark") ? "☀️ Light" : "🌙 Dark"}
+              {typeof document !== "undefined" && document.documentElement.classList.contains("dark") ? "☀️ Light" : "🌙 Dark"}
             </button>
           </div>
         </div>
 
+        {/* Markets */}
         <div className={isGrid ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32" : "space-y-8 pb-32"}>
           {filtered.length > 0 ? (
             filtered.map((market, i) => (
