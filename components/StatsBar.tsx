@@ -6,12 +6,7 @@ export default function StatsBar() {
 
   useEffect(() => {
     const es = new EventSource("/api/stats/stream");
-    es.onmessage = (e) => {
-      try {
-        const data = JSON.parse(e.data);
-        setStats(data);
-      } catch {}
-    };
+    es.onmessage = (e) => setStats(JSON.parse(e.data));
     return () => es.close();
   }, []);
 
