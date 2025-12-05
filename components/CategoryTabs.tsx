@@ -1,22 +1,24 @@
+// components/CategoryTabs.tsx
 "use client";
 
-import { useState } from "react";
+const categories = ["All", "Crypto", "Politics", "Sports", "Tech", "Entertainment"];
 
-const categories = ["All", "Politics", "Crypto", "Sports", "Entertainment", "Climate", "Economics"];
+type Props = {
+  active: string;
+  onChange: (cat: string) => void;
+};
 
-export default function CategoryTabs() {
-  const [active, setActive] = useState("All");
-
+export default function CategoryTabs({ active, onChange }: Props) {
   return (
-    <div className="flex flex-wrap justify-center gap-3 mb-8">
+    <div className="flex flex-wrap justify-center gap-3 mb-12">
       {categories.map((cat) => (
         <button
           key={cat}
-          onClick={() => setActive(cat)}
-          className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
+          onClick={() => onChange(cat)}
+          className={`px-6 py-3 rounded-full font-medium transition-all ${
             active === cat
-              ? "bg-gradient-to-r from-primary to-accent text-black shadow-lg shadow-primary/50"
-              : "bg-card border border-border text-gray-400 hover:border-primary/50 hover:text-primary"
+              ? "bg-gradient-to-r from-primary to-accent text-black shadow-lg"
+              : "bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700"
           }`}
         >
           {cat}
