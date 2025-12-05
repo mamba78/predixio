@@ -1,7 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import LegalModal from "@/components/LegalModal";
-import Footer from "@/components/Footer";
+import ClientFooter from "@/components/ClientFooter";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
@@ -13,9 +13,24 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark scroll-smooth">
+      {/* Disable wallet extensions that break hydration */}
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                if (typeof window !== "undefined") {
+                  window.TronLink = window.TronLink || { disabled: true };
+                  window.ethereum = window.ethereum || {};
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className={`${inter.variable} font-sans antialiased min-h-screen bg-black text-white flex flex-col`}>
         <div className="flex-1">{children}</div>
-        <Footer />
+        <ClientFooter />
         <LegalModal />
       </body>
     </html>
