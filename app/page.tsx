@@ -4,12 +4,23 @@ import { useState, useEffect } from "react";
 import StatsBar from "@/components/StatsBar";
 import MarketCard from "@/components/MarketCard";
 
+type Market = {
+  title: string;
+  platform: string;
+  yes_price: string;
+  no_price: string;
+  volume: number;
+  category: string;
+  link?: string;
+};
+
 export default function Home() {
-  const [markets, setMarkets] = useState([]);
-  const [filtered, setFiltered] = useState([]);
+  const [markets, setMarkets] = useState<Market[]>([]);
+  const [filtered, setFiltered] = useState<Market[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [isGrid, setIsGrid] = useState(true);
+  const [sortBy, setSortBy] = useState("volume");
 
   useEffect(() => {
     fetch("/api/markets")
@@ -19,7 +30,7 @@ export default function Home() {
         setFiltered(data);
       })
       .catch(() => {
-        const fallback = [
+        const fallback: Market[] = [
           { title: "Will Bitcoin hit $100K by Dec 31, 2025?", platform: "Polymarket", yes_price: "0.72", no_price: "0.28", volume: 3800000, category: "Crypto", link: "https://polymarket.com" },
           { title: "Trump wins 2028 election?", platform: "Polymarket", yes_price: "0.65", no_price: "0.35", volume: 2100000, category: "Politics", link: "https://polymarket.com" },
           { title: "Ethereum above $5K in 2026?", platform: "Polymarket", yes_price: "0.41", no_price: "0.59", volume: 1500000, category: "Crypto", link: "https://polymarket.com" },
@@ -31,11 +42,18 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    let result = markets;
-    if (search) result = result.filter((m: any) => m.title.toLowerCase().includes(search.toLowerCase()));
-    if (category !== "All") result = result.filter((m: any) => m.category === category);
+    let result = [...markets];
+
+    if (search) result = result.filter(m => m.title.toLowerCase().includes(search.toLowerCase()));
+    if (category !== "All") result = result.filter(m => m.category === category);
+
+    // Sorting
+    if (sortBy === "volume") result.sort((a, b) => b.volume - a.volume);
+    if (sortBy === "newest") result.sort((a, b) => b.volume - a.volume); // placeholder
+    if (sortBy === "alpha") result.sort((a, b) => a.title.localeCompare(b.title));
+
     setFiltered(result);
-  }, [search, category, markets]);
+  }, [search, category, sortBy, markets]);
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -53,7 +71,7 @@ export default function Home() {
       </section>
 
       <section className="max-w-7xl mx-auto px-6 -mt-10">
-        {/* Search + Toggle on one line */}
+        {/* Search + Sort + Toggle */}
         <div className="flex flex-col lg:flex-row gap-6 items-center justify-between mb-8">
           <input
             type="text"
@@ -64,33 +82,33 @@ export default function Home() {
           />
 
           <div className="flex gap-4">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-6 py-4 bg-gray-900 border border-gray-700 rounded-full text-white focus:outline-none"
+            >
+              <option value="volume">Sort by Volume</option>
+              <option value="newest">Sort by Newest</option>
+              <option value="alpha">Sort by Name</option>
+            </select>
+
             <button
               onClick={() => setIsGrid(!isGrid)}
-              className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full shadow-2xl hover:scale-105 transition"
+              className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full hover:scale-105 transition"
             >
-              {isGrid ? (
-                <>
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                  Grid View
-                </>
-              ) : (
-                <>
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/></svg>
-                  List View
-                </>
-              )}
+              {isGrid ? "List View" : "Grid View"}
             </button>
 
             <button
               onClick={() => document.documentElement.classList.toggle("dark")}
-              className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-yellow-500/20 to-orange-600/20 border border-yellow-500/30 rounded-full text-yellow-400 font-medium hover:from-yellow-500/40 transition"
+              className="px-8 py-4 bg-gray-800 rounded-full hover:bg-gray-700 transition"
             >
-              {document.documentElement.classList.contains("dark") ? "☀️ Light" : "🌙 Dark"}
+              {document.documentElement.classList.contains("dark") ? "Light" : "Dark"}
             </button>
           </div>
         </div>
 
-        {/* Categories — centered */}
+        {/* Categories */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           {["All", "Crypto", "Politics", "Sports", "Tech", "Entertainment"].map(cat => (
             <button
@@ -107,9 +125,9 @@ export default function Home() {
         </div>
 
         {/* Markets */}
-        <div className={isGrid ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32" : "space-y-6 pb-32"}>
+        <div className={isGrid ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32" : "space-y-8 pb-32"}>
           {filtered.length > 0 ? (
-            filtered.map((market: any, i: number) => (
+            filtered.map((market, i) => (
               <MarketCard key={i} market={market} />
             ))
           ) : (
