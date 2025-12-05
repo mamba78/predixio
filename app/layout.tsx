@@ -3,33 +3,18 @@ import { Inter } from "next/font/google";
 import LegalModal from "@/components/LegalModal";
 import ClientFooter from "@/components/ClientFooter";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
-export const metadata = {
-  title: "Predixio – Real-Time Prediction Markets 2025",
-  description: "Polymarket • Kalshi • All markets in one place",
-};
+export const metadata = { title: "Predixio", description: "All prediction markets" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                if (typeof window !== 'undefined') {
-                  window.TronLink = { disabled: true };
-                  if (window.ethereum) window.ethereum.isMetaMask = false;
-                }
-              })();
-            `,
-          }}
-          suppressHydrationWarning
-        />
+        <script dangerouslySetInnerHTML={{ __html: `window.TronLink={disabled:true};` }} />
       </head>
-      <body className={`${inter.variable} font-sans antialiased min-h-screen bg-black text-white flex flex-col`}>
-        <div className="flex-1">{children}</div>
+      <body className={`${inter.variable} font-sans min-h-screen bg-black text-white flex flex-col`}>
+        {children}
         <ClientFooter />
         <LegalModal />
       </body>
