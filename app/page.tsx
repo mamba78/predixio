@@ -70,13 +70,13 @@ export default function Home() {
           <div className="relative flex-1 max-w-xl">
             {/* Search icon using emoji (no lucide needed) */}
             <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 text-xl">Search</span>
-            <input
-              type="text"
-              placeholder="Search any market..."
-              value={search}
-              onChange={e => setSearch(e.target  .target.value)}
-              className="w-full pl-14 pr-6 py-5 bg-gray-900/90 border border-gray-800 rounded-2xl text-lg focus:outline-none focus:border-primary transition"
-            />
+              <input
+                type="text"
+                placeholder="Search any market..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}   // ← FIXED HERE
+                className="w-full pl-14 pr-6 py-5 bg-gray-900/90 border border-gray-800 rounded-2xl text-lg focus:outline-none focus:border-primary transition"
+              />
           </div>
 
           <div className="flex gap-4">
