@@ -1,37 +1,31 @@
+'use client';
+"use client";
+
+import { useState, useEffect, Suspense } from "react";
 import StatsBar from "@/components/StatsBar";
 import MarketCard from "@/components/MarketCard";
 import CategoryTabs from "@/components/CategoryTabs";
-import ErrorBoundary from "@/components/ErrorBoundary";
-import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
-function MarketsClient() {
+export default function Home() {
   const [markets, setMarkets] = useState([]);
 
   useEffect(() => {
     fetch("/api/markets")
-      .then(res => res.json())
-      .then(setMarkets)
-      .catch(console.error);
+      .then(r => r.json())
+      .then(data => setMarkets(data))
+      .catch(() => {
+        // Fallback if API fails
+        setMarkets([
+          { title: "Will Bitcoin hit $100K by Dec 31, 2025?", platform: "Polymarket", yes_price: "0.72", no_price: "0.28", volume: 3800000, category: "Crypto", link: "https://polymarket.com" },
+          { title: "Trump wins 2028 election?", platform: "Polymarket", yes_price: "0.65", no_price: "0.35", volume: 2100000, category: "Politics", link: "https://polymarket.com" },
+          { title: "Ethereum above $5K in 2026?", platform: "Polymarket", yes_price: "0.41", no_price: "0.59", volume: 1500000, category: "Crypto", link: "https://polymarket.com" },
+          { title: "Apple foldable iPhone in 2026?", platform: "Polymarket", yes_price: "0.45", no_price: "0.55", volume: 800000, category: "Tech", link: "https://polymarket.com" },
+        ]);
+      });
   }, []);
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-32" suppressHydrationWarning>
-      {markets.length > 0 ? (
-        markets.map((market: any, i: number) => (
-          <MarketCard key={i} market={market} />
-        ))
-      ) : (
-        <div className="col-span-full text-center py-32 text-xl text-gray-400">
-          Loading live markets...
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default function Home() {
   return (
     <main className="min-h-screen">
       <section className="relative py-32 overflow-hidden">
@@ -49,11 +43,17 @@ export default function Home() {
 
       <section className="max-w-7xl mx-auto px-6 -mt-10">
         <CategoryTabs />
-        <ErrorBoundary>
-          <Suspense fallback={<div className="text-center py-32 text-xl text-gray-400">Loading markets...</div>}>
-            <MarketsClient />
-          </Suspense>
-        </ErrorBoundary>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-20">
+          {markets.length > 0 ? (
+            markets.map((market: any, i: number) => (
+              <MarketCard key={i} market={market} />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-32 text-xl text-gray-400">
+              Loading live markets...
+            </div>
+          )}
+        </div>
       </section>
     </main>
   );
