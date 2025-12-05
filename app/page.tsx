@@ -18,8 +18,6 @@ export default function Home() {
   const [markets, setMarkets] = useState<Market[]>([]);
   const [filtered, setFiltered] = useState<Market[]>([]);
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
-  const [isGrid, setIsGrid] = useState(true);
   const [sortBy, setSortBy] = useState("volume");
 
   useEffect(() => {
@@ -43,21 +41,23 @@ export default function Home() {
 
   useEffect(() => {
     let result = [...markets];
-
     if (search) result = result.filter(m => m.title.toLowerCase().includes(search.toLowerCase()));
-    if (category !== "All") result = result.filter(m => m.category === category);
 
+    // Sorting
     if (sortBy === "volume") result.sort((a, b) => b.volume - a.volume);
+    if (sortBy === "yes") result.sort((a, b) => Number(b.yes_price) - Number(a.yes_price));
     if (sortBy === "alpha") result.sort((a, b) => a.title.localeCompare(b.title));
 
     setFiltered(result);
-  }, [search, category, sortBy, markets]);
+  }, [search, sortBy, markets]);
+
+  // Get available categories
+  const availableCategories = ["All", ...new Set(markets.map(m => m.category))];
 
   return (
     <main className="min-h-screen bg-black text-white">
-      {/* Hero with 70px margin */}
       <section className="relative py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 to-purple-900/20 mb-20" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-black" />
         <div className="relative max-w-7xl mx-auto px-6 text-center">
           <h1 className="text-8xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             PREDIXIO
@@ -70,7 +70,7 @@ export default function Home() {
       </section>
 
       <section className="max-w-7xl mx-auto px-6 -mt-10">
-        {/* Search + Controls */}
+        {/* Search + Sort */}
         <div className="flex flex-col lg:flex-row gap-6 items-center justify-between mb-8">
           <input
             type="text"
@@ -84,35 +84,32 @@ export default function Home() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-6 py-4 bg-gray-900 border border-gray-700 rounded-full text-white"
+              className="px-6 py-4 bg-gray-900 border border-gray-700 rounded-full text-white focus:outline-none"
             >
-              <option value="volume">Volume</option>
-              <option value="alpha">Name</option>
+              <option value="volume">Volume ↓</option>
+              <option value="yes">Yes Price ↓</option>
+              <option value="alpha">Name A-Z</option>
             </select>
-
-            <button
-              onClick={() => setIsGrid(!isGrid)}
-              className="px-6 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full hover:scale-105 transition"
-            >
-              {isGrid ? "List View" : "Grid View"}
-            </button>
 
             <button
               onClick={() => document.documentElement.classList.toggle("dark")}
               className="px-6 py-4 bg-gray-800 rounded-full hover:bg-gray-700 transition"
             >
-              {typeof document !== "undefined" && document.documentElement.classList.contains("dark") ? "Light" : "Dark"}
+              {document.documentElement.classList.contains("dark") ? "☀️ Light" : "🌙 Dark"}
             </button>
           </div>
         </div>
 
-        {/* Categories */}
+        {/* Categories — only show available ones */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {["All", "Crypto", "Politics", "Sports", "Tech", "Entertainment"].map(cat => (
+          {availableCategories.map(cat => (
             <button
               key={cat}
               onClick={() => setCategory(cat)}
-              className={`px-8 py-3 rounded-full font-medium transition-all ${category === cat ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-black" : "bg-gray-800 text-gray-400 hover:text-white"}`}
+              className={`px-8 py-3 rounded-full font-medium transition-all ${category === cat
+                ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-black shadow-lg"
+                : "bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700"
+              }`}
             >
               {cat}
             </button>
@@ -120,13 +117,13 @@ export default function Home() {
         </div>
 
         {/* Markets */}
-        <div className={isGrid ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32" : "space-y-8 pb-32"}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32">
           {filtered.length > 0 ? (
             filtered.map((market, i) => (
               <MarketCard key={i} market={market} />
             ))
           ) : (
-            <div className="text-center py-32 text-xl text-gray-400">No markets found</div>
+            <div className="col-span-full text-center py-32 text-xl text-gray-400">No markets found</div>
           )}
         </div>
       </section>
