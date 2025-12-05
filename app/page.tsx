@@ -1,34 +1,30 @@
 import StatsBar from "@/components/StatsBar";
 import MarketCard from "@/components/MarketCard";
-import HeaderControls from "@/components/HeaderControls";
+import CategoryTabs from "@/components/CategoryTabs";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
-async function MarketsGrid({ search = "", category = "All" }: { search?: string; category?: string }) {
-  const res = await fetch("https://predixio.vercel.app/api/markets", { cache: "no-store" });
-  let markets = res.ok ? await res.json() : [];
+function MarketsClient() {
+  const [markets, setMarkets] = useState([]);
 
-  // Filter by search
-  if (search) {
-    const q = search.toLowerCase();
-    markets = markets.filter((m: any) => m.title.toLowerCase().includes(q));
-  }
-
-  // Filter by category
-  if (category !== "All") {
-    markets = markets.filter((m: any) => m.category === category);
-  }
+  useEffect(() => {
+    fetch("/api/markets")
+      .then(res => res.json())
+      .then(setMarkets)
+      .catch(console.error);
+  }, []);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 pb-32">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-32" suppressHydrationWarning>
       {markets.length > 0 ? (
         markets.map((market: any, i: number) => (
           <MarketCard key={i} market={market} />
         ))
       ) : (
         <div className="col-span-full text-center py-32 text-xl text-gray-400">
-          No markets found
+          Loading live markets...
         </div>
       )}
     </div>
@@ -52,10 +48,12 @@ export default function Home() {
       </section>
 
       <section className="max-w-7xl mx-auto px-6 -mt-10">
-        <Suspense fallback={<div className="text-center py-32 text-xl text-gray-400">Loading...</div>}>
-          <HeaderControls onSearch={() => {}} onCategory={() => {}} />
-          <MarketsGrid search="" category="All" />
-        </Suspense>
+        <CategoryTabs />
+        <ErrorBoundary>
+          <Suspense fallback={<div className="text-center py-32 text-xl text-gray-400">Loading markets...</div>}>
+            <MarketsClient />
+          </Suspense>
+        </ErrorBoundary>
       </section>
     </main>
   );
