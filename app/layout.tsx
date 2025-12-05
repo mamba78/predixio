@@ -12,29 +12,16 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
+    <html lang="en" className="dark scroll-smooth">
       <head>
-        {/* Block TronLink and other wallets from breaking hydration */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if (typeof window !== 'undefined') {
-                window.TronLink = { disabled: true };
-                if (window.ethereum) window.ethereum.isMetaMask = false;
-              }
-            `,
-          }}
-        />
+        <script dangerouslySetInnerHTML={{ __html: `window.TronLink={disabled:true};` }} />
       </head>
-
       <body className={`${inter.variable} font-sans antialiased min-h-screen bg-black text-white flex flex-col`}>
-        {/* Main content grows to push footer down */}
+        {/* Main content grows to fill space */}
         <div className="flex-1">{children}</div>
 
-        {/* Sticky footer — always at bottom, even on short pages */}
-        <footer className="sticky bottom-0 w-full bg-black border-t border-gray-800 z-50">
-          <ClientFooter />
-        </footer>
+        {/* Footer — sticks to bottom, no extra space */}
+        <ClientFooter />
 
         <LegalModal />
       </body>
