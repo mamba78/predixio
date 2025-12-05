@@ -20,6 +20,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [isGrid, setIsGrid] = useState(true);
+  const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
     fetch("/api/markets")
@@ -47,8 +48,13 @@ export default function Home() {
     setFiltered(result);
   }, [search, category, markets]);
 
+  useEffect(() => {
+    if (isDark) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
+  }, [isDark]);
+
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-black text-white dark:bg-black dark:text-white">
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-black" />
         <div className="relative max-w-7xl mx-auto px-6 text-center">
@@ -63,18 +69,17 @@ export default function Home() {
       </section>
 
       <section className="max-w-7xl mx-auto px-6 -mt-10">
-        {/* Search */}
-        <div className="flex justify-center mb-8">
+        {/* Search + Categories */}
+        <div className="mb-8">
           <input
             type="text"
             placeholder="Search markets..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full max-w-2xl px-8 py-4 bg-gray-900 border border-gray-700 rounded-full text-lg focus:outline-none focus:border-cyan-500 transition"
+            className="w-full max-w-2xl mx-auto block px-8 py-4 bg-gray-900 border border-gray-700 rounded-full text-lg focus:outline-none focus:border-cyan-500 transition"
           />
         </div>
 
-        {/* Categories — on their own line, centered, elegant */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           {["All", "Crypto", "Politics", "Sports", "Tech", "Entertainment"].map(cat => (
             <button
@@ -90,33 +95,31 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Toggle Buttons — elegant, right-aligned */}
-        <div className="flex justify-end gap-4 mb-8">
+        {/* Toggle Buttons */}
+        <div className="flex justify-end gap-6 mb-8 pr-6">
           <button
             onClick={() => setIsGrid(!isGrid)}
             className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-cyan-500/20 to-purple-600/20 border border-cyan-500/30 rounded-full text-cyan-400 font-medium hover:from-cyan-500/40 transition-all"
           >
-            {isGrid ? "⬜ Grid" : "📜 List"}
+            {isGrid ? "⬜ Grid View" : "📜 List View"}
           </button>
 
           <button
-            onClick={() => document.documentElement.classList.toggle("dark")}
-            className="flex items-center gap-3 px-6 py-3 bg-gray-800 rounded-full text-yellow-400 hover:bg-gray-700 transition"
+            onClick={() => setIsDark(!isDark)}
+            className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-yellow-500/20 to-orange-600/20 border border-yellow-500/30 rounded-full text-yellow-400 font-medium hover:from-yellow-500/40 transition-all"
           >
-            {document.documentElement.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode"}
+            {isDark ? "☀️ Light Mode" : "🌙 Dark Mode"}
           </button>
         </div>
 
-        {/* Markets — grid or elegant single-line list */}
+        {/* Markets */}
         <div className={isGrid
           ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32"
           : "space-y-6 pb-32"
         }>
           {filtered.length > 0 ? (
             filtered.map((market, i) => (
-              <div key={i} className={!isGrid ? "flex items-center gap-8 bg-gray-900/50 border border-gray-800 rounded-2xl p-6" : ""}>
-                <MarketCard market={market} />
-              </div>
+              <MarketCard key={i} market={market} />
             ))
           ) : (
             <div className="text-center py-32 text-xl text-gray-400">No markets found</div>
