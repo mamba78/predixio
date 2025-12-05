@@ -1,13 +1,13 @@
 import StatsBar from "@/components/StatsBar";
 import MarketCard from "@/components/MarketCard";
 import CategoryTabs from "@/components/CategoryTabs";
+import { Suspense } from "react";
 
 // Force dynamic rendering
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default async function Home() {
-  // THIS LINE WORKS EVERYWHERE: localhost + Vercel + Railway
+async function MarketsGrid() {
   const url = process.env.NEXT_PUBLIC_VERCEL_URL
     ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
     : "http://localhost:3000";
@@ -18,6 +18,22 @@ export default async function Home() {
 
   const markets = res.ok ? await res.json() : [];
 
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-20" suppressHydrationWarning>
+      {markets.length > 0 ? (
+        markets.map((market: any, i: number) => (
+          <MarketCard key={i} market={market} />
+        ))
+      ) : (
+        <div className="col-span-full text-center py-32 text-gray-500 text-xl">
+          Loading live markets...
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default async function Home() {
   return (
     <main className="min-h-screen">
       <section className="relative py-32 overflow-hidden">
@@ -35,17 +51,9 @@ export default async function Home() {
 
       <section className="max-w-7xl mx-auto px-6 -mt-10">
         <CategoryTabs />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-20">
-          {markets.length > 0 ? (
-            markets.map((market: any, i: number) => (
-              <MarketCard key={i} market={market} />
-            ))
-          ) : (
-            <div className="col-span-full text-center py-32 text-gray-500 text-xl">
-              Loading live markets...
-            </div>
-          )}
-        </div>
+        <Suspense fallback={<div className="col-span-full text-center py-32 text-gray-500 text-xl">Loading live markets...</div>}>
+          <MarketsGrid />
+        </Suspense>
       </section>
     </main>
   );

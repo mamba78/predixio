@@ -12,7 +12,23 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
+      <head>
+        {/* Block TronLink/MetaMask from breaking hydration */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                if (typeof window !== 'undefined') {
+                  window.TronLink = { disabled: true };
+                  if (window.ethereum) window.ethereum.isMetaMask = false;
+                }
+              })();
+            `,
+          }}
+          suppressHydrationWarning
+        />
+      </head>
       <body className={`${inter.variable} font-sans antialiased min-h-screen bg-black text-white flex flex-col`}>
         <div className="flex-1">{children}</div>
         <ClientFooter />
