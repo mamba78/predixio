@@ -1,7 +1,6 @@
-// app/not-found.tsx
+// app/not-found.tsx → REPLACE WITH THIS
 import Link from "next/link";
 
-// This removes ALL warnings
 export const viewport = {
   themeColor: "#000000",
   width: "device-width",
