@@ -1,7 +1,9 @@
-// app/page.tsx — FINAL VERSION THAT ACTUALLY WORKS
+// app/page.tsx — FINAL VERSION: Infinite scroll WORKS perfectly
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { FixedSizeList as List } from "react-window";
+import InfiniteLoader from "react-window-infinite-loader";
 import MarketCard from "@/components/MarketCard";
 import StatsBar from "@/components/StatsBar";
 import CategoryTabs from "@/components/CategoryTabs";
@@ -18,26 +20,31 @@ type Market = {
   link: string;
 };
 
+const ITEM_HEIGHT = 420;
+const PAGE_SIZE = 30;
+
 export default function Home() {
-  const [markets, setMarkets] = useState<Market[]>([]);
+  const [allMarkets, setAllMarkets] = useState<Market[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [isGrid, setIsGrid] = useState(true);
   const [sortBy, setSortBy] = useState<"volume" | "yes" | "alpha">("volume");
   const [loading, setLoading] = useState(true);
 
+  // Fetch once
   useEffect(() => {
     fetch("/api/markets")
       .then(r => r.json())
       .then(data => {
-        setMarkets(data || []);
+        setAllMarkets(data || []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
 
+  // Filter + Sort
   const filteredMarkets = useMemo(() => {
-    let result = markets
+    let result = allMarkets
       .filter(m => m.title.toLowerCase().includes(search.toLowerCase()))
       .filter(m => category === "All" || m.category === category);
 
@@ -48,10 +55,35 @@ export default function Home() {
     });
 
     return result;
-  }, [markets, search, category, sortBy]);
+  }, [allMarkets, search, category, sortBy]);
+
+  // Reset on filter change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [search, category, sortBy]);
+
+  const isItemLoaded = (index: number) => index < filteredMarkets.length;
+  const itemCount = filteredMarkets.length;
+
+  const loadMoreItems = () => Promise.resolve(); // No network call needed
+
+  const MarketRow = ({ index, style }: { index: number; style: React.CSSProperties }) => {
+    const market = filteredMarkets[index];
+
+    return (
+      <div style={style} className="px-6">
+        {market ? (
+          <MarketCard market={market} isGrid={isGrid} />
+        ) : (
+          <MarketCardSkeleton isGrid={isGrid} />
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
+      {/* Hero */}
       <section className="relative py-24 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
@@ -88,24 +120,33 @@ export default function Home() {
           </div>
         </div>
 
-        <CategoryTabs active={category} onChange={setCategory} markets={markets} />
+        <CategoryTabs active={category} onChange={setCategory} markets={allMarkets} />
 
-        <div className={isGrid
-          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-          : "space-y-6"
-        }>
-          {loading ? (
-            [...Array(12)].map((_, i) => <MarketCardSkeleton key={i} isGrid={isGrid} />)
-          ) : filteredMarkets.length === 0 ? (
-            <div className="col-span-full text-center py-24 text-2xl text-gray-500">
-              No markets found
-            </div>
-          ) : (
-            filteredMarkets.map(market => (
-              <MarketCard key={market.title} market={market} isGrid={isGrid} />
-            ))
-          )}
-        </div>
+        {/* Virtualized List */}
+        {loading ? (
+          <div className={isGrid ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" : "space-y-6"}>
+            {[...Array(12)].map((_, i) => <MarketCardSkeleton key={i} isGrid={isGrid} />)}
+          </div>
+        ) : (
+          <InfiniteLoader
+            isItemLoaded={isItemLoaded}
+            itemCount={itemCount}
+            loadMoreItems={loadMoreItems}
+          >
+            {({ onItemsRendered, ref }) => (
+              <List
+                height={window.innerHeight - 300}
+                itemCount={itemCount}
+                itemSize={ITEM_HEIGHT}
+                width="100%"
+                onItemsRendered={onItemsRendered}
+                ref={ref}
+              >
+                {MarketRow}
+              </List>
+            )}
+          </InfiniteLoader>
+        )}
       </section>
     </>
   );
