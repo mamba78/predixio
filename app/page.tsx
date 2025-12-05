@@ -6,18 +6,17 @@ import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
-// Set this to false to completely disable toggle
-const SHOW_VIEW_TOGGLE = true;
-
 async function MarketsGrid() {
   const res = await fetch("https://predixio.vercel.app/api/markets", { cache: "no-store" });
   const markets = res.ok ? await res.json() : [];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-32" suppressHydrationWarning>
+    <div data-view="grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-32 data-[view=list]:grid-cols-1" suppressHydrationWarning>
       {markets.length > 0 ? (
         markets.map((market: any, i: number) => (
-          <MarketCard key={i} market={market} />
+          <div key={i} className="data-[view=list]:flex data-[view=list]:items-center data-[view=list]:gap-6">
+            <MarketCard market={market} />
+          </div>
         ))
       ) : (
         <div className="col-span-full text-center py-32 text-xl text-gray-400">
@@ -45,9 +44,9 @@ export default function Home() {
       </section>
 
       <section className="max-w-7xl mx-auto px-6 -mt-10">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex justify-between items-center mb-8">
           <CategoryTabs />
-          {SHOW_VIEW_TOGGLE && <ViewToggle />}
+          <ViewToggle />
         </div>
         <Suspense fallback={<div className="text-center py-32 text-xl text-gray-400">Loading markets...</div>}>
           <MarketsGrid />
