@@ -2,11 +2,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import MarketCard from "@/components/MarketCard";           // ← your existing card (we’ll improve it below)
+import MarketCard from "@/components/MarketCard";
 import StatsBar from "@/components/StatsBar";
 import CategoryTabs from "@/components/CategoryTabs";
 import ViewToggle from "@/components/ViewToggle";
-import ClientFooter from "@/components/ClientFooter";
 
 type Market = {
   title: string;
@@ -69,12 +68,13 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-6 -mt-8">
         <div className="flex flex-col lg:flex-row gap-6 items-center justify-between mb-10">
           <div className="relative flex-1 max-w-xl">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+            {/* Search icon using emoji (no lucide needed) */}
+            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 text-xl">Search</span>
             <input
               type="text"
               placeholder="Search any market..."
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={e => setSearch(e.target  .target.value)}
               className="w-full pl-14 pr-6 py-5 bg-gray-900/90 border border-gray-800 rounded-2xl text-lg focus:outline-none focus:border-primary transition"
             />
           </div>
@@ -96,21 +96,21 @@ export default function Home() {
 
         <CategoryTabs active={category} onChange={setCategory} />
 
-        {/* MARKETS – Grid or List */}
+        {/* MARKETS */}
         <div className={isGrid
           ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           : "space-y-5"
         }>
-          {filtered.map(market => (
-            <MarketCard key={market.title + market.yes_price} market={market} isGrid={isGrid} />
-          ))}
+          {filtered.length === 0 ? (
+            <div className="col-span-full text-center py-20 text-xl text-gray-500">
+              No markets match your filters
+            </div>
+          ) : (
+            filtered.map(market => (
+              <MarketCard key={market.title + market.yes_price} market={market} isGrid={isGrid} />
+            ))
+          )}
         </div>
-
-        {filtered.length === 0 && (
-          <div className="text-center py-20 text-xl text-gray-500">
-            No markets match your filters
-          </div>
-        )}
       </section>
     </main>
   );
