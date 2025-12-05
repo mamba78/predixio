@@ -1,26 +1,23 @@
 import StatsBar from "@/components/StatsBar";
 import MarketCard from "@/components/MarketCard";
 import CategoryTabs from "@/components/CategoryTabs";
-import HeaderControls from "@/components/HeaderControls";
 import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
-async function MarketsGrid({ category }: { category: string }) {
+async function MarketsGrid() {
   const res = await fetch("https://predixio.vercel.app/api/markets", { cache: "no-store" });
-  let markets = res.ok ? await res.json() : [];
-
-  if (category !== "All") {
-    markets = markets.filter((m: any) => m.category === category);
-  }
+  const markets = res.ok ? await res.json() : [];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-20" suppressHydrationWarning>
       {markets.length > 0 ? (
-        markets.map((market: any, i: number) => <MarketCard key={i} market={market} />)
+        markets.map((market: any, i: number) => (
+          <MarketCard key={i} market={market} />
+        ))
       ) : (
         <div className="col-span-full text-center py-32 text-xl text-gray-400">
-          No markets available in {category} category
+          Loading live markets...
         </div>
       )}
     </div>
@@ -44,10 +41,9 @@ export default function Home() {
       </section>
 
       <section className="max-w-7xl mx-auto px-6 -mt-10">
-        <HeaderControls onCategory={(cat) => {}} /> {/* Add state later */}
         <CategoryTabs />
         <Suspense fallback={<div className="text-center py-32 text-xl text-gray-400">Loading markets...</div>}>
-          <MarketsGrid category="All" />
+          <MarketsGrid />
         </Suspense>
       </section>
     </main>
