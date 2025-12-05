@@ -11,7 +11,11 @@ async function MarketsGrid() {
   const markets = res.ok ? await res.json() : [];
 
   return (
-    <div data-view="grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-32 data-[view=list]:grid-cols-1" suppressHydrationWarning>
+    <div 
+      data-view="grid"
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-32 data-[view=list]:flex data-[view=list]:flex-col data-[view=list]:gap-8"
+      suppressHydrationWarning
+    >
       {markets.length > 0 ? (
         markets.map((market: any, i: number) => (
           <div key={i} className="data-[view=list]:flex data-[view=list]:items-center data-[view=list]:gap-6">

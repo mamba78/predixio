@@ -1,35 +1,61 @@
-'use client';
+import StatsBar from "@/components/StatsBar";
+import MarketCard from "@/components/MarketCard";
+import CategoryTabs from "@/components/CategoryTabs";
+import ViewToggle from "@/components/ViewToggle";
+import { Suspense } from "react";
 
-import { useState } from "react";
+export const dynamic = "force-dynamic";
 
-export default function ViewToggle() {
-  const [isGrid, setIsGrid] = useState(true);
-
-  const toggle = () => {
-    setIsGrid(!isGrid);
-    document.documentElement.setAttribute("data-view", isGrid ? "list" : "grid");
-  };
+async function MarketsGrid() {
+  const res = await fetch("https://predixio.vercel.app/api/markets", { cache: "no-store" });
+  const markets = res.ok ? await res.json() : [];
 
   return (
-    <button
-      onClick={toggle}
-      className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-cyan-500/20 to-purple-600/20 backdrop-blur border border-cyan-500/30 rounded-full text-cyan-400 font-medium hover:from-cyan-500/40 hover:to-purple-600/40 transition-all"
+    <div 
+      data-view="grid"
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 pb-32 data-[view=list]:flex data-[view=list]:flex-col data-[view=list]:gap-8"
+      suppressHydrationWarning
     >
-      {isGrid ? (
-        <>
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-          </svg>
-          Grid View
-        </>
+      {markets.length > 0 ? (
+        markets.map((market: any, i: number) => (
+          <div key={i} className="data-[view=list]:flex data-[view=list]:items-center data-[view=list]:gap-6">
+            <MarketCard market={market} />
+          </div>
+        ))
       ) : (
-        <>
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-          </svg>
-          List View
-        </>
+        <div className="col-span-full text-center py-32 text-xl text-gray-400">
+          Loading live markets...
+        </div>
       )}
-    </button>
+    </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <main className="min-h-screen">
+      <section className="relative py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-black" />
+        <div className="relative max-w-7xl mx-auto px-6 text-center">
+          <h1 className="text-8xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            PREDIXIO
+          </h1>
+          <p className="text-2xl mt-6 text-gray-300">
+            All Prediction Markets • Real-Time • One Dashboard
+          </p>
+          <StatsBar />
+        </div>
+      </section>
+
+      <section className="max-w-7xl mx-auto px-6 -mt-10">
+        <div className="flex justify-between items-center mb-8">
+          <CategoryTabs />
+          <ViewToggle />
+        </div>
+        <Suspense fallback={<div className="text-center py-32 text-xl text-gray-400">Loading markets...</div>}>
+          <MarketsGrid />
+        </Suspense>
+      </section>
+    </main>
   );
 }
