@@ -6,15 +6,14 @@ export default function ViewToggle() {
   const [isGrid, setIsGrid] = useState(true);
 
   const toggle = () => {
-    const newView = !isGrid;
-    setIsGrid(newView);
-    document.documentElement.dataset.view = newView ? "list" : "grid";
+    setIsGrid(prev => !prev);
+    document.documentElement.dataset.view = isGrid ? "list" : "grid";
   };
 
   return (
     <button
       onClick={toggle}
-      className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full shadow-2xl hover:shadow-cyan-500/50 transition-all hover:scale-105"
+      className="flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full shadow-2xl hover:shadow-cyan-500/50 transition-all hover:scale-105"
     >
       {isGrid ? (
         <>
