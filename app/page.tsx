@@ -1,18 +1,15 @@
+// app/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
-import StatsBar from "@/components/StatsBar";
-import MarketCard from "@/components/MarketCard";
-
-type Market = {
-  title: string;
-  platform: string;
-  yes_price: string;
-  no_price: string;
-  volume: number;
-  category: string;
-  link?: string;
-};
+import { Search, Grid3X3, List } from "lucide-react";
+import MarketCardGrid from "@/components/ui/MarketCardGrid";
+import MarketCardList from "@/components/ui/MarketCardList";
+import StatsBar from "@/components/ui/StatsBar";
+import CategoryTabs from "@/components/ui/CategoryTabs";
+import ViewToggle from "@/components/ui/ViewToggle";
+import SortSelect from "@/components/ui/SortSelect";
+import { Market } from "@/types/market";
 
 export default function Home() {
   const [markets, setMarkets] = useState<Market[]>([]);
@@ -20,7 +17,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [isGrid, setIsGrid] = useState(true);
-  const [sortBy, setSortBy] = useState("volume");
+  const [sortBy, setSortBy] = useState<"volume" | "yes" | "alpha">("volume");
 
   useEffect(() => {
     fetch("/api/markets")
@@ -31,10 +28,8 @@ export default function Home() {
       })
       .catch(() => {
         const fallback: Market[] = [
-          { title: "Will Bitcoin hit $100K by Dec 31, 2025?", platform: "Polymarket", yes_price: "0.72", no_price: "0.28", volume: 3800000, category: "Crypto", link: "https://polymarket.com" },
-          { title: "Trump wins 2028 election?", platform: "Polymarket", yes_price: "0.65", no_price: "0.35", volume: 2100000, category: "Politics", link: "https://polymarket.com" },
-          { title: "Ethereum above $5K in 2026?", platform: "Polymarket", yes_price: "0.41", no_price: "0.59", volume: 1500000, category: "Crypto", link: "https://polymarket.com" },
-          { title: "Apple foldable iPhone in 2026?", platform: "Polymarket", yes_price: "0.45", no_price: "0.55", volume: 800000, category: "Tech", link: "https://polymarket.com" },
+          { title: "Will Bitcoin hit $100K by Dec 31, 2025?", platform: "Polymarket", yes_price: "0.72", no_price: "0.28", volume: 3800000, category: "Crypto", link: process.env.NEXT_PUBLIC_AFFILIATE_POLYMARKET || "https://polymarket.com" },
+          // ... more
         ];
         setMarkets(fallback);
         setFiltered(fallback);
@@ -42,95 +37,75 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    let result = [...markets];
+    let result = markets.filter(m =>
+      m.title.toLowerCase().includes(search.toLowerCase()) &&
+      (category === "All" || m.category === category)
+    );
 
-    if (search) result = result.filter(m => m.title.toLowerCase().includes(search.toLowerCase()));
-    if (category !== "All") result = result.filter(m => m.category === category);
-
-    // SORTING — WORKS
-    if (sortBy === "volume") result.sort((a, b) => b.volume - a.volume);
-    if (sortBy === "yes") result.sort((a, b) => Number(b.yes_price) - Number(a.yes_price));
-    if (sortBy === "alpha") result.sort((a, b) => a.title.localeCompare(b.title));
+    result.sort((a, b) => {
+      if (sortBy === "volume") return b.volume - a.volume;
+      if (sortBy === "yes") return parseFloat(b.yes_price) - parseFloat(a.yes_price);
+      return a.title.localeCompare(b.title);
+    });
 
     setFiltered(result);
   }, [search, category, sortBy, markets]);
 
   return (
-    <main className="min-h-screen bg-black text-white">
-      <section className="relative py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-black" />
+    <main className="min-h-screen bg-black text-white pb-24">
+      {/* Hero */}
+      <section className="relative py-24 lg:py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-black to-black" />
         <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-8xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <h1 className="text-6xl md:text-8xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             PREDIXIO
           </h1>
-          <p className="text-2xl mt-6 text-gray-300">
+          <p className="text-xl md:text-2xl mt-6 text-gray-300">
             All Prediction Markets • Real-Time • One Dashboard
           </p>
-          <StatsBar />
+          <StatsBar className="mt-16" />
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 -mt-10">
-        <div className="flex flex-col lg:flex-row gap-6 items-center justify-between mb-8">
-          <input
-            type="text"
-            placeholder="Search markets..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full lg:w-96 px-8 py-4 bg-gray-900 border border-gray-700 rounded-full text-lg focus:outline-none focus:border-cyan-500"
-          />
+      {/* Controls */}
+      <section className="max-w-7xl mx-auto px-6">
+        <div className="flex flex-col lg:flex-row gap-6 mb-10">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-4 w-5 h-5 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Search markets..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-12 pr-6 py-4 bg-gray-900/80 border border-gray-800 rounded-2xl text-lg focus:outline-none focus:border-primary transition"
+            />
+          </div>
 
-          <div className="flex gap-4">
-            {/* SORTING */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="px-6 py-4 bg-gray-900 border border-gray-700 rounded-full text-white focus:outline-none"
-            >
-              <option value="volume">Volume</option>
-              <option value="yes">Yes Price</option>
-              <option value="alpha">Name</option>
-            </select>
-
-            {/* GRID/LIST */}
-            <button
-              onClick={() => setIsGrid(!isGrid)}
-              className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full hover:scale-105 transition"
-            >
-              {isGrid ? "List View" : "Grid View"}
-            </button>
-
-            {/* DARK/LIGHT */}
-            <button
-              onClick={() => document.documentElement.classList.toggle("dark")}
-              className="px-8 py-4 bg-gray-800 rounded-full hover:bg-gray-700 transition"
-            >
-              {typeof document !== "undefined" && document.documentElement.classList.contains("dark") ? "Light" : "Dark"}
-            </button>
+          <div className="flex gap-3">
+            <SortSelect value={sortBy} onChange={setSortBy} />
+            <ViewToggle isGrid={isGrid} toggle={() => setIsGrid(!isGrid)} />
           </div>
         </div>
 
-        {/* CATEGORIES */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {["All", "Crypto", "Politics", "Sports", "Tech", "Entertainment"].map(cat => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`px-8 py-3 rounded-full font-medium transition-all ${category === cat ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-black" : "bg-gray-800 text-gray-400 hover:text-white"}`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        <CategoryTabs active={category} onChange={setCategory} />
 
-        {/* MARKETS */}
-        <div className={isGrid ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32" : "space-y-8 pb-32"}>
-          {filtered.length > 0 ? (
-            filtered.map((market, i) => (
-              <MarketCard key={i} market={market} />
-            ))
+        {/* Markets */}
+        <div className={isGrid
+          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          : "space-y-4"
+        }>
+          {filtered.length === 0 ? (
+            <p className="col-span-full text-center py-20 text-gray-500 text-xl">
+              No markets found
+            </p>
           ) : (
-            <div className="text-center py-32 text-xl text-gray-400">No markets found</div>
+            filtered.map((market) => (
+              isGrid ? (
+                <MarketCardGrid key={market.title} market={market} />
+              ) : (
+                <MarketCardList key={market.title} market={market} />
+              )
+            ))
           )}
         </div>
       </section>
