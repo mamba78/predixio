@@ -1,7 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // This single line FORCES dynamic mode – no static export
-  output: undefined,
+  reactStrictMode: true,
+  swcMinify: true,
+  // Disable static export completely
+  output: 'standalone',
+  // Disable static rendering for dynamic routes
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client'],
+  },
 };
 
 module.exports = nextConfig;
