@@ -19,7 +19,8 @@ export default function Home() {
   const [filtered, setFiltered] = useState<Market[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
-  const [sortBy, setSortBy] = useState("volume");
+  const [isGrid, setIsGrid] = useState(true);
+  const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
     fetch("/api/markets")
@@ -44,15 +45,13 @@ export default function Home() {
     let result = [...markets];
     if (search) result = result.filter(m => m.title.toLowerCase().includes(search.toLowerCase()));
     if (category !== "All") result = result.filter(m => m.category === category);
-
-    if (sortBy === "volume") result.sort((a, b) => b.volume - a.volume);
-    if (sortBy === "yes") result.sort((a, b) => Number(b.yes_price) - Number(a.yes_price));
-    if (sortBy === "alpha") result.sort((a, b) => a.title.localeCompare(b.title));
-
     setFiltered(result);
-  }, [search, category, sortBy, markets]);
+  }, [search, category, markets]);
 
-  const availableCategories = ["All", ...new Set(markets.map(m => m.category))];
+  useEffect(() => {
+    if (isDark) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
+  }, [isDark]);
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -80,47 +79,41 @@ export default function Home() {
           />
 
           <div className="flex gap-4">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="px-6 py-4 bg-gray-900 border border-gray-700 rounded-full text-white"
+            <button
+              onClick={() => setIsGrid(!isGrid)}
+              className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full hover:scale-105 transition"
             >
-              <option value="volume">Volume</option>
-              <option value="yes">Yes Price</option>
-              <option value="alpha">Name</option>
-            </select>
+              {isGrid ? "List View" : "Grid View"}
+            </button>
 
             <button
-              onClick={() => document.documentElement.classList.toggle("dark")}
-              className="px-6 py-4 bg-gray-800 rounded-full hover:bg-gray-700 transition"
+              onClick={() => setIsDark(!isDark)}
+              className="px-8 py-4 bg-gray-800 rounded-full hover:bg-gray-700 transition"
             >
-              {document.documentElement.classList.contains("dark") ? "Light" : "Dark"}
+              {isDark ? "Light" : "Dark"}
             </button>
           </div>
         </div>
 
         <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {availableCategories.map(cat => (
+          {["All", "Crypto", "Politics", "Sports", "Tech", "Entertainment"].map(cat => (
             <button
               key={cat}
               onClick={() => setCategory(cat)}
-              className={`px-8 py-3 rounded-full font-medium transition-all ${category === cat
-                ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-black shadow-lg"
-                : "bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700"
-              }`}
+              className={`px-8 py-3 rounded-full font-medium transition-all ${category === cat ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-black" : "bg-gray-800 text-gray-400 hover:text-white"}`}
             >
               {cat}
             </button>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32">
+        <div className={isGrid ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32" : "space-y-8 pb-32"}>
           {filtered.length > 0 ? (
             filtered.map((market, i) => (
               <MarketCard key={i} market={market} />
             ))
           ) : (
-            <div className="col-span-full text-center py-32 text-xl text-gray-400">No markets found</div>
+            <div className="text-center py-32 text-xl text-gray-400">No markets found</div>
           )}
         </div>
       </section>
