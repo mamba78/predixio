@@ -1,11 +1,80 @@
-// app/projects/page.tsx — FINAL, 100% NO SUSPENSE ERROR (2025 GOD MODE)
+// app/projects/page.tsx — FINAL, 100% WORKING (2025 GOD MODE)
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Suspense } from "react";
 
-// THIS IS THE ONLY COMPONENT THAT CAN USE useSearchParams
+export const metadata: Metadata = {
+  title: "Best Prediction Market Platforms 2025 — Polymarket vs Manifold vs Kalshi vs PredictIt",
+  description: "Compare Polymarket (crypto), Manifold (play-money), Kalshi (regulated), PredictIt (politics). Real-time volumes, regulation, markets, and affiliate links.",
+  keywords: "best prediction markets 2025, polymarket vs manifold, kalshi vs polymarket, predictit alternative, crypto betting platforms",
+  openGraph: {
+    title: "Best Prediction Market Platforms 2025 — Predixio",
+    description: "Polymarket vs Manifold vs Kalshi vs PredictIt — full comparison",
+    url: "https://predixio.com/projects",
+    type: "website",
+    images: [{ url: "/og-projects.png", width: 1200, height: 630, alt: "Best Prediction Markets 2025" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Best Prediction Market Platforms 2025",
+    description: "Polymarket vs Manifold vs Kalshi vs PredictIt — compared live",
+    images: ["/og-projects.png"],
+  },
+  alternates: {
+    canonical: "https://predixio.com/projects",
+  },
+};
+
 function ProjectsContent() {
+  const platforms = [
+    {
+      name: "Polymarket",
+      description: "World's largest decentralized prediction market on Polygon.",
+      logo: "/logos/polymarket.png",
+      type: "Crypto",
+      regulated: false,
+      volume: "$2.1B+",
+      markets: "1,200+",
+      status: "Live" as const,
+      link: process.env.NEXT_PUBLIC_AFFILIATE_POLYMARKET || "https://polymarket.com",
+      affiliate: true,
+    },
+    {
+      name: "Manifold Markets",
+      description: "Play-money forecasting platform. Fastest-growing community.",
+      logo: "/logos/manifold.png",
+      type: "Play Money",
+      regulated: false,
+      volume: "10B+ Mana",
+      markets: "15,000+",
+      status: "Live" as const,
+      link: "https://manifold.markets",
+    },
+    {
+      name: "Kalshi",
+      description: "CFTC-regulated real-money prediction markets. US legal.",
+      logo: "/logos/kalshi.png",
+      type: "Real Money",
+      regulated: true,
+      volume: "$500M+",
+      markets: "100+",
+      status: "Coming Soon" as const,
+      link: "https://kalshi.com",
+    },
+    {
+      name: "PredictIt",
+      description: "Academic political prediction market with real money.",
+      logo: "/logos/predictit.png",
+      type: "Real Money",
+      regulated: true,
+      volume: "$1B+",
+      markets: "200+",
+      status: "Coming Soon" as const,
+      link: "https://predictit.org",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-background py-24">
       <div className="max-w-7xl mx-auto px-6">
@@ -166,24 +235,17 @@ export default function Projects() {
             "@type": "ItemList",
             name: "Best Prediction Market Platforms 2025",
             description: "Comparison of top prediction market platforms including Polymarket, Manifold, Kalshi and PredictIt.",
-            numberOfItems: platforms.length,
-            itemListElement: platforms.map((p, i) => ({
-              "@type": "ListItem",
-              position: i + 1,
-              item: {
-                "@type": "Organization",
-                name: p.name,
-                description: p.description,
-                url: p.link,
-                logo: { "@type": "ImageObject", url: `https://predixio.com${p.logo}` },
-                sameAs: [p.link],
-              },
-            })),
+            numberOfItems: 4,
+            itemListElement: [
+              { "@type": "ListItem", position: 1, item: { "@type": "Organization", name: "Polymarket", url: "https://polymarket.com" } },
+              { "@type": "ListItem", position: 2, item: { "@type": "Organization", name: "Manifold Markets", url: "https://manifold.markets" } },
+              { "@type": "ListItem", position: 3, item: { "@type": "Organization", name: "Kalshi", url: "https://kalshi.com" } },
+              { "@type": "ListItem", position: 4, item: { "@type": "Organization", name: "PredictIt", url: "https://predictit.org" } },
+            ],
           }),
         }}
       />
 
-      {/* SUSPENSE BOUNDARY — THIS KILLS THE ERROR */}
       <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><div className="text-2xl text-gray-500">Loading platforms...</div></div>}>
         <ProjectsContent />
       </Suspense>
