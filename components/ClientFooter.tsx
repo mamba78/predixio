@@ -12,9 +12,6 @@ export default function ClientFooter() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop: Horizontal layout */}
         <div className="hidden md:flex flex-wrap justify-center items-center gap-x-8 gap-y-4 mb-4 font-medium text-sm">
-          <Link href="/" className="hover:text-primary transition font-bold tracking-wider">
-            Markets
-          </Link>
           <button onClick={() => setOpen("about")} className="hover:text-primary transition">
             About
           </button>

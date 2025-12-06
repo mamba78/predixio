@@ -1,11 +1,11 @@
-// app/layout.tsx — FINAL, FLAWLESS, PRODUCTION-READY
+// app/layout.tsx — FINAL, FLAWLESS, PRODUCTION-READY (2025 EDITION)
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Navbar from "@/components/Navbar";
 import ClientFooter from "@/components/ClientFooter";
 import LegalModal from "@/components/LegalModal";
-import AboutModal from "@/components/AboutModal"; // ← NEW
+import AboutModal from "@/components/AboutModal";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -89,7 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* Critical Performance Preloads */}
         <link rel="preload" href="/api/markets" as="fetch" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://gamma.api.polymarket.com" />
+        <link rel="preconnect" href="https://gamma-api.polymarket.com" />
         <link rel="preconnect" href="https://clob.polymarket.com" />
 
         {/* Block TronLink spam */}
@@ -109,7 +109,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           <Navbar />
 
-          {/* Main content */}
+          {/* Main content — perfect spacing */}
           <main className="flex-1 pt-20 pb-24 md:pb-20">
             {children}
           </main>
@@ -121,9 +121,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </footer>
 
-          {/* All modals */}
+          {/* All modals — About + Legal */}
           <LegalModal />
-          <AboutModal /> {/* ← NEW: About popup */}
+          <AboutModal />
         </ThemeProvider>
       </body>
     </html>
