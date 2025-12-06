@@ -4,13 +4,11 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import MarketCard from "@/components/MarketCard";
 import StatsBar from "@/components/StatsBar";
-import CategoryTabs from "@/components/CategoryTabs";
 import ViewToggle from "@/components/ViewToggle";
 import MarketCardSkeleton from "@/components/MarketCardSkeleton";
 import SearchBar from "@/components/SearchBar";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { useInView } from "react-intersection-observer";
-import Link from "next/link";
 
 type Market = {
   title: string;
@@ -20,8 +18,6 @@ type Market = {
   volume: number;
   category: string;
   link: string;
-  created_at?: number;
-  liquidity?: number;
 };
 
 const PAGE_SIZE = 30;
@@ -29,9 +25,10 @@ const PAGE_SIZE = 30;
 export default function Home() {
   const [allMarkets, setAllMarkets] = useState<Market[]>([]);
   const [search, setSearch] = useState("");
+  const [selectedPlatform, setSelectedPlatform] = useState<string>("All");
   const [category, setCategory] = useState("All");
   const [isGrid, setIsGrid] = useState(true);
-  const [sortBy, setSortBy] = useState<"volume" | "yes" | "alpha" | "newest" | "liquidity">("volume");
+  const [sortBy, setSortBy] = useState<"volume" | "yes" | "alpha">("volume");
   const [loading, setLoading] = useState(true);
 
   const [displayedMarkets, setDisplayedMarkets] = useState<Market[]>([]);
@@ -49,11 +46,33 @@ export default function Home() {
       .catch(() => setLoading(false));
   }, []);
 
+  // Dynamic platforms from data
+  const availablePlatforms = useMemo(() => {
+    const platforms = new Set(["All", ...allMarkets.map(m => m.platform)]);
+    return Array.from(platforms);
+  }, [allMarkets]);
+
+  // Dynamic categories from data
+  const availableCategories = useMemo(() => {
+    const cats = new Set(["All", ...allMarkets.map(m => m.category).filter(Boolean)]);
+    return Array.from(cats).sort();
+  }, [allMarkets]);
+
   // Filter + sort
   const filteredMarkets = useMemo(() => {
-    let result = allMarkets
-      .filter(m => typeof m.title === "string" && m.title.toLowerCase().includes(search.toLowerCase()))
-      .filter(m => category === "All" || m.category === category);
+    let result = allMarkets;
+
+    if (selectedPlatform !== "All") {
+      result = result.filter(m => m.platform === selectedPlatform);
+    }
+
+    if (search) {
+      result = result.filter(m => m.title.toLowerCase().includes(search.toLowerCase()));
+    }
+
+    if (category !== "All") {
+      result = result.filter(m => m.category === category);
+    }
 
     result.sort((a, b) => {
       if (sortBy === "volume") return (b.volume || 0) - (a.volume || 0);
@@ -62,13 +81,11 @@ export default function Home() {
         const bYes = parseFloat(b.yes_price ?? "0") || 0;
         return bYes - aYes;
       }
-      if (sortBy === "newest") return (b.created_at || 0) - (a.created_at || 0);
-      if (sortBy === "liquidity") return (b.liquidity || b.volume || 0) - (a.liquidity || a.volume || 0);
       return a.title.localeCompare(b.title);
     });
 
     return result;
-  }, [allMarkets, search, category, sortBy]);
+  }, [allMarkets, selectedPlatform, search, category, sortBy]);
 
   // Initial load
   useEffect(() => {
@@ -110,25 +127,30 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Platforms Banner */}
-      <div className="py-8 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 backdrop-blur-xl border-y border-primary/20">
-        <div className="max-w-5xl mx-auto text-center px-6">
-          <p className="text-xl text-gray-300">
-            Live data from{" "}
-            <Link href="/projects" className="font-bold text-primary hover:underline">
-              Polymarket • Manifold • Kalshi
-            </Link>{" "}
-            and more
-          </p>
-        </div>
-      </div>
-
       {/* Main Content */}
       <section className="relative z-20 max-w-7xl mx-auto px-6 pb-32">
         {/* Controls */}
         <div className="space-y-8 mb-12">
           <SearchBar value={search} onChange={setSearch} />
 
+          {/* Platform Filter — Dynamic from live data */}
+          <div className="flex flex-wrap justify-center gap-4">
+            {availablePlatforms.map(plat => (
+              <button
+                key={plat}
+                onClick={() => setSelectedPlatform(plat)}
+                className={`px-8 py-4 rounded-full font-bold transition-all duration-300 ${
+                  selectedPlatform === plat
+                    ? "bg-gradient-to-r from-primary to-accent text-black shadow-xl"
+                    : "bg-gray-800/90 text-gray-300 hover:text-primary"
+                }`}
+              >
+                {plat === "All" ? "All Platforms" : plat}
+              </button>
+            ))}
+          </div>
+
+          {/* Sort + View Toggle */}
           <div className="flex flex-wrap items-center justify-between gap-6">
             <select
               value={sortBy}
@@ -137,8 +159,6 @@ export default function Home() {
             >
               <option value="volume">Highest Volume</option>
               <option value="yes">Highest Yes Price</option>
-              <option value="liquidity">Most Liquid</option>
-              <option value="newest">Newest First</option>
               <option value="alpha">A-Z</option>
             </select>
 
@@ -148,7 +168,22 @@ export default function Home() {
           </div>
         </div>
 
-        <CategoryTabs active={category} onChange={setCategory} markets={allMarkets} />
+        {/* Category Filter — Dynamic from live data */}
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          {availableCategories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setCategory(cat)}
+              className={`px-6 py-3 rounded-full font-bold transition-all duration-300 ${
+                category === cat
+                  ? "bg-gradient-to-r from-primary to-accent text-black shadow-xl"
+                  : "bg-gray-800/90 text-gray-300 hover:text-primary"
+              }`}
+            >
+              {cat === "All" ? "All Categories" : cat}
+            </button>
+          ))}
+        </div>
 
         {/* Markets */}
         {loading ? (
@@ -160,19 +195,18 @@ export default function Home() {
         ) : displayedMarkets.length === 0 ? (
           <div className="text-center py-32">
             <p className="text-4xl font-bold text-gray-500 mb-4">No markets found</p>
-            <p className="text-gray-400 text-lg">Try searching "Trump", "Bitcoin", or "Election"</p>
+            <p className="text-gray-400 text-lg">Try changing platform or search</p>
           </div>
         ) : (
           <>
             <div className={isGrid ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" : "space-y-6"}>
               {displayedMarkets.map(market => (
                 <ErrorBoundary key={market.link}>
-                  <MarketCard key={market.link} market={market} isGrid={isGrid} />
+                  <MarketCard market={market} isGrid={isGrid} />
                 </ErrorBoundary>
               ))}
             </div>
 
-            {/* Infinite Scroll Trigger */}
             {hasMore && (
               <div ref={ref} className="py-16 text-center">
                 {isLoadingMore ? (
