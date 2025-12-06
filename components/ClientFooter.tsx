@@ -1,4 +1,4 @@
-// components/ClientFooter.tsx — FINAL, RESPONSIVE, IMMORTAL (2025 PERFECTION)
+// components/ClientFooter.tsx — FINAL, CLEAN, ELEGANT (2025 PERFECTION)
 "use client";
 
 import Link from "next/link";
@@ -10,10 +10,10 @@ export default function ClientFooter() {
   return (
     <footer className="border-t border-gray-800 py-6 text-center">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Desktop — Clean horizontal */}
+        {/* Desktop */}
         <div className="hidden md:flex flex-wrap justify-center items-center gap-x-10 gap-y-4 mb-5 font-medium text-sm">
-          <Link href="/" className="hover:text-primary transition font-bold tracking-wider">
-            Markets
+          <Link href="/projects" className="hover:text-primary transition font-bold tracking-wider">
+            Platforms
           </Link>
 
           <button onClick={() => setOpen("about")} className="hover:text-primary transition">
@@ -43,11 +43,11 @@ export default function ClientFooter() {
           </button>
         </div>
 
-        {/* Mobile — Ultra-compact, elegant */}
+        {/* Mobile */}
         <div className="md:hidden space-y-5 text-xs">
           <div className="flex items-center justify-center gap-6 text-sm font-medium">
-            <Link href="/" className="hover:text-primary transition font-bold">
-              Markets
+            <Link href="/projects" className="hover:text-primary transition font-bold">
+              Platforms
             </Link>
             <button onClick={() => setOpen("about")} className="hover:text-primary transition">
               About

@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 const formatVolume = (v: number | null | undefined): string => {
   if (!v || v <= 0) return "$0";
@@ -9,6 +10,14 @@ const formatVolume = (v: number | null | undefined): string => {
   if (v >= 1e9) return `$${(v / 1e9).toFixed(2)}B`;
   if (v >= 1e6) return `$${(v / 1e6).toFixed(1)}M`;
   return `$${v.toLocaleString()}`;
+};
+
+// Official platform logos — direct URLs (no broken images)
+const platformLogos: Record<string, string> = {
+  Polymarket: "https://polymarket.com/images/polymarket-logo-white.svg",
+  Manifold: "https://manifold.markets/logo.png",
+  Kalshi: "https://kalshi.com/assets/images/kalshi-logo.svg",
+  PredictIt: "https://www.predictit.org/Content/images/PredictItLogo.png",
 };
 
 export default function MarketCard({
@@ -67,7 +76,7 @@ export default function MarketCard({
     </div>
   );
 
-  // LIST VIEW — ELITE ONE-LINE, CATEGORY NEXT TO TITLE
+  // LIST VIEW — ELITE ONE-LINE WITH LOGO + SEXY VOLUME
   if (!isGrid) {
     return (
       <Link
@@ -77,23 +86,40 @@ export default function MarketCard({
         className="group block bg-background border border-border rounded-2xl p-6 hover:border-primary/70 transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
       >
         <div className="flex items-center justify-between gap-8">
-          {/* Title + Real Category */}
-          <div className="flex-1 min-w-0 flex items-center gap-4">
-            <h3 className="font-bold text-xl truncate text-foreground group-hover:text-primary transition">
-              {market.title || "Unknown Market"}
-            </h3>
-            <span className="text-xs font-bold text-primary uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full whitespace-nowrap">
-              {market.category || "Uncategorized"}
-            </span>
+          {/* Logo + Title + Category */}
+          <div className="flex items-center gap-5 flex-1 min-w-0">
+            <Image
+              src={platformLogos[market.platform] || "https://via.placeholder.com/48/333/00f5ff?text=?"}
+              alt={market.platform}
+              width={48}
+              height={48}
+              className="rounded-lg border border-border/50 flex-shrink-0"
+              unoptimized
+            />
+
+            <div className="min-w-0">
+              <h3 className="font-bold text-xl truncate text-foreground group-hover:text-primary transition">
+                {market.title || "Unknown Market"}
+              </h3>
+              <div className="flex items-center gap-3 mt-1">
+                <span className="text-xs font-bold text-primary/80 uppercase tracking-widest">
+                  {market.platform}
+                </span>
+                <span className="text-xs font-bold text-primary uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full">
+                  {market.category || "Other"}
+                </span>
+              </div>
+            </div>
           </div>
 
-          <div className="w-72 flex-shrink-0">
+          {/* Liquidity Bar */}
+          <div className="w-80 flex-shrink-0">
             <LiquidityBar />
           </div>
 
-          {/* Volume — Clean, no FIRE */}
+          {/* Volume — ULTRA SEXY */}
           <div className="text-right">
-            <span className="text-xl font-black text-foreground">
+            <span className="text-2xl font-black bg-gradient-to-r from-amber-400 via-orange-500 to-red-600 bg-clip-text text-transparent drop-shadow-lg">
               {formatVolume(market.volume)}
             </span>
           </div>
@@ -102,7 +128,7 @@ export default function MarketCard({
     );
   }
 
-  // GRID VIEW — Clean volume, no FIRE
+  // GRID VIEW — Clean & minimal
   return (
     <div className="group relative bg-background border border-border rounded-3xl p-7 hover:border-primary/70 transition-all duration-500 shadow-xl hover:shadow-2xl hover:-translate-y-3 flex flex-col h-full overflow-hidden">
       <div className="flex justify-between items-start mb-5">
@@ -110,7 +136,7 @@ export default function MarketCard({
           {market.platform || "Polymarket"}
         </span>
         <span className="text-xs text-muted font-medium">
-          {market.category || "Uncategorized"}
+          {market.category || "Other"}
         </span>
       </div>
 

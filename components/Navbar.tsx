@@ -4,21 +4,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle"; // ← NEW: External toggle
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Prevent hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const toggleTheme = () => {
-    setTheme(resolvedTheme === "dark" ? "light" : "dark");
-  };
 
   // Close mobile menu on navigation
   useEffect(() => {
@@ -43,20 +33,8 @@ export default function Navbar() {
 
           {/* Right Side */}
           <div className="flex items-center gap-4">
-            {/* Theme Toggle */}
-            {mounted && (
-              <button
-                onClick={toggleTheme}
-                aria-label="Toggle dark mode"
-                className="p-3 rounded-full bg-gray-800/80 hover:bg-gray-700/80 backdrop-blur-sm transition hover:scale-110"
-              >
-                {resolvedTheme === "dark" ? (
-                  <Sun className="w-5 h-5 text-yellow-400" />
-                ) : (
-                  <Moon className="w-5 h-5 text-blue-400" />
-                )}
-              </button>
-            )}
+            {/* Theme Toggle — Now using external component */}
+            <ThemeToggle />
 
             {/* Mobile Menu Toggle */}
             <button
@@ -73,7 +51,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Menu — Clean & Empty (just for UX) */}
+        {/* Mobile Menu — Clean & minimal */}
         {mobileOpen && (
           <div className="md:hidden mt-6 pb-6 border-t border-gray-800 pt-6">
             <div className="h-12 flex items-center justify-center">

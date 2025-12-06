@@ -1,4 +1,4 @@
-// app/api/markets/route.ts — FINAL, IMMORTAL, WITH FULL ERROR HANDLING
+// app/api/markets/route.ts — FINAL, IMMORTAL, POLYMARKET + MANIFOLD + REAL CATEGORIES (2025 PERFECTION)
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -11,9 +11,9 @@ export async function GET() {
   const timeoutId = setTimeout(() => controller.abort(), 8500);
 
   try {
-    // === POLYMARKET (PRIMARY) ===
-    let polymarketMarkets: any[] = [];
+    let allMarkets: any[] = [];
 
+    // === POLYMARKET (PRIMARY) ===
     try {
       const gammaRes = await fetch(
         "https://gamma-api.polymarket.com/markets?active=true&closed=false&limit=300",
@@ -28,23 +28,22 @@ export async function GET() {
 
       if (gammaRes.ok) {
         const data = await gammaRes.json();
-        polymarketMarkets = data.map((m: any) => ({
+        const markets = data.map((m: any) => ({
           title: m.question || "Unknown Market",
           platform: "Polymarket",
           yes_price: String(Number(m.outcome_prices?.[0] || m.yes_bid || 0.5).toFixed(2)),
           no_price: String(Number(m.outcome_prices?.[1] || m.no_bid || 0.5).toFixed(2)),
           volume: Number(m.volume_24h || m.volume || 0),
-          category: m.tags?.[0] || "Other",
+          category: m.tags?.[0] || "Other", // This is the real category
           link: `https://polymarket.com/event/${m.slug || m.id}?ref=predixio`,
         }));
+        allMarkets.push(...markets);
       }
     } catch (err) {
-      console.warn("Polymarket Gamma API failed:", err);
+      console.warn("Polymarket API failed:", err);
     }
 
     // === MANIFOLD MARKETS (SECONDARY) ===
-    let manifoldMarkets: any[] = [];
-
     try {
       const manifoldRes = await fetch("https://manifold.markets/api/v0/markets?limit=200", {
         signal: controller.signal,
@@ -52,7 +51,7 @@ export async function GET() {
 
       if (manifoldRes.ok) {
         const data = await manifoldRes.json();
-        manifoldMarkets = data
+        const markets = data
           .filter((m: any) => m.outcomeType === "BINARY" && !m.isResolved)
           .map((m: any) => ({
             title: m.question,
@@ -60,20 +59,21 @@ export async function GET() {
             yes_price: String((m.probability * 100).toFixed(0)).padStart(2, "0") + "¢",
             no_price: String(((1 - m.probability) * 100).toFixed(0)).padStart(2, "0") + "¢",
             volume: Math.round(m.volume || 0),
-            category: m.group?.name || m.tags?.[0] || "Other",
+            category: m.group?.name || m.tags?.[0] || "Other", // Real category
             link: `https://manifold.markets/${m.creatorUsername}/${m.slug}`,
           }));
+        allMarkets.push(...markets);
       }
     } catch (err) {
       console.warn("Manifold API failed:", err);
     }
 
-    // Combine results
-    const allMarkets = [...polymarketMarkets, ...manifoldMarkets]
+    // Sort by volume + limit
+    const sortedMarkets = allMarkets
       .sort((a, b) => b.volume - a.volume)
       .slice(0, 500);
 
-    return new NextResponse(JSON.stringify(allMarkets), {
+    return new NextResponse(JSON.stringify(sortedMarkets), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
@@ -82,13 +82,10 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("All market APIs failed — returning empty array", error);
+    console.error("All APIs failed — returning empty array", error);
     return new NextResponse(JSON.stringify([]), {
       status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "s-maxage=60",
-      },
+      headers: { "Content-Type": "application/json" },
     });
   } finally {
     clearTimeout(timeoutId);

@@ -1,15 +1,15 @@
-// app/projects/page.tsx — FINAL SEO + SCHEMA.ORG (2025 PERFECTION)
+// app/projects/page.tsx — FINAL, FLAWLESS, SEO + COMPARISON TABLE (2025 PERFECTION)
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "Best Prediction Market Platforms 2025 — Polymarket, Manifold, Kalshi & More",
-  description: "Compare top prediction market platforms: Polymarket (crypto), Manifold (play-money), Kalshi (regulated), PredictIt. Real-time data, volumes, categories, and affiliate links.",
-  keywords: "best prediction markets 2025, polymarket, manifold markets, kalshi, predictit, prediction market platforms, crypto betting, real money prediction markets",
+  title: "Best Prediction Market Platforms 2025 — Polymarket vs Manifold vs Kalshi vs PredictIt",
+  description: "Compare Polymarket (crypto), Manifold (play-money), Kalshi (regulated), PredictIt (politics). Real-time volumes, regulation, markets, and affiliate links.",
+  keywords: "best prediction markets 2025, polymarket vs manifold, kalshi vs polymarket, predictit alternative, crypto betting platforms",
   openGraph: {
     title: "Best Prediction Market Platforms 2025 — Predixio",
-    description: "Compare Polymarket, Manifold, Kalshi, PredictIt and more in one place.",
+    description: "Polymarket vs Manifold vs Kalshi vs PredictIt — full comparison",
     url: "https://predixio.com/projects",
     type: "website",
     images: [{ url: "/og-projects.png", width: 1200, height: 630, alt: "Best Prediction Markets 2025" }],
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Best Prediction Market Platforms 2025",
-    description: "Polymarket, Manifold, Kalshi & more — compared live",
+    description: "Polymarket vs Manifold vs Kalshi vs PredictIt — compared live",
     images: ["/og-projects.png"],
   },
   alternates: {
@@ -28,39 +28,47 @@ export const metadata: Metadata = {
 const platforms = [
   {
     name: "Polymarket",
-    description: "World's largest decentralized prediction market on Polygon. Crypto, politics, sports, culture.",
-    logo: "/logos/polymarket.png",
-    status: "Live",
+    description: "World's largest decentralized prediction market on Polygon.",
+    logo: "https://polymarket.com/images/polymarket-logo-white.svg",
+    type: "Crypto",
+    regulated: false,
     volume: "$2.1B+",
     markets: "1,200+",
+    status: "Live",
     link: process.env.NEXT_PUBLIC_AFFILIATE_POLYMARKET || "https://polymarket.com",
     affiliate: true,
   },
   {
     name: "Manifold Markets",
-    description: "Play-money forecasting platform. AI, news, personal bets. Fastest-growing community.",
-    logo: "/logos/manifold.png",
-    status: "Live",
+    description: "Play-money forecasting platform. Fastest-growing community.",
+    logo: "https://manifold.markets/logo.png",
+    type: "Play Money",
+    regulated: false,
     volume: "10B+ Mana",
     markets: "15,000+",
+    status: "Live",
     link: "https://manifold.markets",
   },
   {
     name: "Kalshi",
-    description: "CFTC-regulated real-money prediction markets. Weather, economy, events. US legal.",
-    logo: "/logos/kalshi.png",
-    status: "Coming Soon",
+    description: "CFTC-regulated real-money prediction markets. US legal.",
+    logo: "https://kalshi.com/assets/images/kalshi-logo.svg",
+    type: "Real Money",
+    regulated: true,
     volume: "$500M+",
     markets: "100+",
+    status: "Coming Soon",
     link: "https://kalshi.com",
   },
   {
     name: "PredictIt",
-    description: "Academic political prediction market. Election odds with real money.",
-    logo: "/logos/predictit.png",
-    status: "Coming Soon",
+    description: "Academic political prediction market with real money.",
+    logo: "https://www.predictit.org/Content/images/PredictItLogo.png",
+    type: "Real Money",
+    regulated: true,
     volume: "$1B+",
     markets: "200+",
+    status: "Coming Soon",
     link: "https://predictit.org",
   },
 ];
@@ -68,7 +76,7 @@ const platforms = [
 export default function Projects() {
   return (
     <>
-      {/* === FULL SCHEMA.ORG MARKUP — GOOGLE WILL LOVE THIS === */}
+      {/* === FULL SCHEMA.ORG MARKUP === */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -88,21 +96,12 @@ export default function Projects() {
                 url: platform.link,
                 logo: {
                   "@type": "ImageObject",
-                  url: `https://predixio.com${platform.logo}`,
+                  url: platform.logo,
                 },
-                sameAs: [
-                  platform.link,
-                  platform.name === "Polymarket" ? "https://twitter.com/polymarket" : undefined,
-                  platform.name === "Manifold Markets" ? "https://twitter.com/manifoldmarkets" : undefined,
-                ].filter(Boolean),
+                sameAs: [platform.link],
                 additionalType: "https://schema.org/FinancialService",
               },
             })),
-            author: {
-              "@type": "Organization",
-              name: "Predixio",
-              url: "https://predixio.com",
-            },
           }),
         }}
       />
@@ -115,8 +114,74 @@ export default function Projects() {
               Best Prediction Market Platforms 2025
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto">
-              Compare the top real-time prediction markets: Polymarket (crypto), Manifold (play-money), Kalshi (regulated), PredictIt (politics).
+              Compare Polymarket vs Manifold vs Kalshi vs PredictIt — real-time volumes, regulation, and features.
             </p>
+          </div>
+
+          {/* COMPARISON TABLE */}
+          <div className="overflow-x-auto -mx-6 px-6 mb-20">
+            <table className="w-full max-w-5xl mx-auto border border-gray-800 rounded-2xl overflow-hidden">
+              <thead className="bg-gray-900/50">
+                <tr>
+                  <th className="px-6 py-5 text-left text-sm font-bold text-primary">Platform</th>
+                  <th className="px-6 py-5 text-center text-sm font-bold text-primary">Type</th>
+                  <th className="px-6 py-5 text-center text-sm font-bold text-primary">Regulated</th>
+                  <th className="px-6 py-5 text-center text-sm font-bold text-primary">Volume</th>
+                  <th className="px-6 py-5 text-center text-sm font-bold text-primary">Markets</th>
+                  <th className="px-6 py-5 text-center text-sm font-bold text-primary">Status</th>
+                  <th className="px-6 py-5 text-center text-sm font-bold text-primary"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-800">
+                {platforms.map((platform) => (
+                  <tr key={platform.name} className="hover:bg-gray-900/30 transition">
+                    <td className="px-6 py-6 font-bold flex items-center gap-4">
+                      <Image
+                        src={platform.logo}
+                        alt=""
+                        width={40}
+                        height={40}
+                        className="rounded-lg"
+                        unoptimized
+                      />
+                      {platform.name}
+                    </td>
+                    <td className="text-center text-gray-400">{platform.type}</td>
+                    <td className="text-center">
+                      {platform.regulated ? (
+                        <span className="text-success">Yes</span>
+                      ) : (
+                        <span className="text-gray-500">No</span>
+                      )}
+                    </td>
+                    <td className="text-center text-foreground font-bold">{platform.volume}</td>
+                    <td className="text-center text-foreground">{platform.markets}</td>
+                    <td className="text-center">
+                      <span
+                        className={`inline-block px-4 py-2 rounded-full text-xs font-bold ${
+                          platform.status === "Live"
+                            ? "bg-success/20 text-success"
+                            : "bg-gray-800 text-gray-400"
+                        }`}
+                      >
+                        {platform.status}
+                      </span>
+                    </td>
+                    <td className="text-center">
+                      <Link
+                        href={platform.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-gradient px-6 py-3 text-sm"
+                      >
+                        {platform.status === "Live" ? "Visit" : "Soon"}
+                        {platform.affiliate && " →"}
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
           {/* Grid */}
@@ -125,24 +190,16 @@ export default function Projects() {
               <div
                 key={platform.name}
                 className="card p-8 text-center group hover:shadow-glow transition-all duration-500"
-                itemScope
-                itemType="https://schema.org/Organization"
               >
-                <meta itemProp="name" content={platform.name} />
-                <meta itemProp="description" content={platform.description} />
-                <meta itemProp="url" content={platform.link} />
-
                 <Image
                   src={platform.logo}
                   alt={`${platform.name} logo`}
                   width={100}
                   height={100}
                   className="mx-auto mb-6 rounded-2xl"
-                  itemProp="logo"
+                  unoptimized
                 />
-                <h2 className="text-2xl font-black mb-3" itemProp="name">
-                  {platform.name}
-                </h2>
+                <h2 className="text-2xl font-black mb-3">{platform.name}</h2>
                 <p className="text-gray-400 text-sm mb-6 leading-relaxed">
                   {platform.description}
                 </p>
@@ -173,8 +230,8 @@ export default function Projects() {
                 <Link
                   href={platform.link}
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="btn-gradient block"
-                  itemProp="url"
                 >
                   {platform.status === "Live" ? "Visit Platform" : "Learn More"}
                   {platform.affiliate && " →"}
@@ -183,7 +240,6 @@ export default function Projects() {
             ))}
           </div>
 
-          {/* Footer CTA */}
           <div className="text-center mt-20">
             <p className="text-lg text-gray-400">
               More platforms coming soon...{" "}
