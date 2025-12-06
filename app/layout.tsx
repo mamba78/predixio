@@ -20,6 +20,7 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
+  userScalable: false,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#000000" },
@@ -32,7 +33,7 @@ export const metadata = {
     template: "%s | Predixio",
   },
   description: "All Polymarket, Kalshi, Manifold & prediction markets in one fast, real-time dashboard.",
-  keywords: "prediction markets, polymarket, kalshi, manifold, crypto, real-time odds, blockchain betting",
+  keywords: "prediction markets, polymarket, kalshi, manifold, crypto betting, real-time odds, blockchain",
   authors: [{ name: "Predixio", url: "https://predixio.com" }],
   creator: "Predixio",
   publisher: "Predixio",
@@ -43,7 +44,14 @@ export const metadata = {
     description: "Real-time prices, volume, liquidity — Polymarket + Kalshi + Manifold + more",
     url: "https://predixio.com",
     siteName: "Predixio",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Predixio" }],
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Predixio – The Ultimate Prediction Market Dashboard",
+      },
+    ],
     locale: "en_US",
     type: "website",
   },
@@ -76,32 +84,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* PWA Essentials */}
+        {/* PWA + Performance */}
         <meta name="application-name" content="Predixio" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="format-detection" content="telephone=no" />
 
-        {/* Icons & Manifest */}
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="icon" href="/favicon.ico" />
 
-        {/* Critical Performance Preloads */}
         <link rel="preload" href="/api/markets" as="fetch" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://gamma-api.polymarket.com" />
         <link rel="preconnect" href="https://clob.polymarket.com" />
         <link rel="preconnect" href="https://manifold.markets" />
 
         {/* Block TronLink spam */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.TronLink={disabled:true};`,
-          }}
-        />
+        <script dangerouslySetInnerHTML={{ __html: `window.TronLink={disabled:true};` }} />
 
-        {/* STRUCTURED DATA — SEO GOD MODE */}
+        {/* SEO Structured Data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -120,10 +122,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               publisher: {
                 "@type": "Organization",
                 name: "Predixio",
-                logo: {
-                  "@type": "ImageObject",
-                  url: "https://predixio.com/og.png",
-                },
+                logo: { "@type": "ImageObject", url: "https://predixio.com/og.png" },
               },
             }),
           }}
@@ -137,24 +136,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           enableSystem={true}
           disableTransitionOnChange
         >
-          {/* Analytics + Error Logging */}
           <Analytics />
-
           <Navbar />
+          <main className="flex-1 pt-20 pb-24 md:pb-20">{children}</main>
 
-          {/* Main content */}
-          <main className="flex-1 pt-20 pb-24 md:pb-20">
-            {children}
-          </main>
-
-          {/* Fixed bottom footer */}
           <footer className="fixed inset-x-0 bottom-0 bg-black/95 backdrop-blur-xl border-t border-gray-800 z-50 supports-[backdrop-filter]:bg-black/80">
             <div className="pb-safe">
               <ClientFooter />
             </div>
           </footer>
 
-          {/* All modals */}
           <LegalModal />
           <AboutModal />
         </ThemeProvider>
