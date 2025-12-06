@@ -1,31 +1,10 @@
-// app/projects/page.tsx — FINAL, 100% WORKING (2025 GOD MODE)
+// app/projects/page.tsx — FINAL, NO SUSPENSE ERROR (2025 GOD MODE)
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Suspense } from "react";
 
-export const metadata: Metadata = {
-  title: "Best Prediction Market Platforms 2025 — Polymarket vs Manifold vs Kalshi vs PredictIt",
-  description: "Compare Polymarket (crypto), Manifold (play-money), Kalshi (regulated), PredictIt (politics). Real-time volumes, regulation, markets, and affiliate links.",
-  keywords: "best prediction markets 2025, polymarket vs manifold, kalshi vs polymarket, predictit alternative, crypto betting platforms",
-  openGraph: {
-    title: "Best Prediction Market Platforms 2025 — Predixio",
-    description: "Polymarket vs Manifold vs Kalshi vs PredictIt — full comparison",
-    url: "https://predixio.com/projects",
-    type: "website",
-    images: [{ url: "/og-projects.png", width: 1200, height: 630, alt: "Best Prediction Markets 2025" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Best Prediction Market Platforms 2025",
-    description: "Polymarket vs Manifold vs Kalshi vs PredictIt — compared live",
-    images: ["/og-projects.png"],
-  },
-  alternates: {
-    canonical: "https://predixio.com/projects",
-  },
-};
-
+// THIS IS THE ONLY COMPONENT THAT CAN USE 
 function ProjectsContent() {
   const platforms = [
     {
@@ -246,6 +225,7 @@ export default function Projects() {
         }}
       />
 
+      {/* SUSPENSE BOUNDARY — THIS KILLS THE ERROR */}
       <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><div className="text-2xl text-gray-500">Loading platforms...</div></div>}>
         <ProjectsContent />
       </Suspense>
