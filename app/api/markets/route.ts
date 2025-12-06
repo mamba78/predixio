@@ -1,4 +1,4 @@
-// app/api/markets/route.ts — FINAL, IMMORTAL, POLYMARKET + MANIFOLD + REAL CATEGORIES (2025 PERFECTION)
+// app/api/markets/route.ts — FINAL, IMMORTAL, POLYMARKET + MANIFOLD (2025 PERFECTION)
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -34,7 +34,7 @@ export async function GET() {
           yes_price: String(Number(m.outcome_prices?.[0] || m.yes_bid || 0.5).toFixed(2)),
           no_price: String(Number(m.outcome_prices?.[1] || m.no_bid || 0.5).toFixed(2)),
           volume: Number(m.volume_24h || m.volume || 0),
-          category: m.tags?.[0] || "Other", // This is the real category
+          category: m.tags?.[0] || "Uncategorized", // Real category — no "Other"
           link: `https://polymarket.com/event/${m.slug || m.id}?ref=predixio`,
         }));
         allMarkets.push(...markets);
@@ -59,7 +59,7 @@ export async function GET() {
             yes_price: String((m.probability * 100).toFixed(0)).padStart(2, "0") + "¢",
             no_price: String(((1 - m.probability) * 100).toFixed(0)).padStart(2, "0") + "¢",
             volume: Math.round(m.volume || 0),
-            category: m.group?.name || m.tags?.[0] || "Other", // Real category
+            category: m.group?.name || m.tags?.[0] || "Uncategorized", // Real category
             link: `https://manifold.markets/${m.creatorUsername}/${m.slug}`,
           }));
         allMarkets.push(...markets);
@@ -68,7 +68,7 @@ export async function GET() {
       console.warn("Manifold API failed:", err);
     }
 
-    // Sort by volume + limit
+    // Sort by volume + limit to 500
     const sortedMarkets = allMarkets
       .sort((a, b) => b.volume - a.volume)
       .slice(0, 500);
@@ -82,7 +82,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("All APIs failed — returning empty array", error);
+    console.error("All market APIs failed — returning empty array", error);
     return new NextResponse(JSON.stringify([]), {
       status: 200,
       headers: { "Content-Type": "application/json" },

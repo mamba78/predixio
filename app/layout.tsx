@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import ClientFooter from "@/components/ClientFooter";
 import LegalModal from "@/components/LegalModal";
 import AboutModal from "@/components/AboutModal";
+import Analytics from "@/components/Analytics";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -136,6 +137,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           enableSystem={true}
           disableTransitionOnChange
         >
+          {/* Analytics + Error Logging */}
+          <Analytics />
+
           <Navbar />
 
           {/* Main content */}

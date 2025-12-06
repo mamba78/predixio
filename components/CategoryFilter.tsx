@@ -23,30 +23,29 @@ export default function CategoryFilter({ markets, active, onChange }: Props) {
         if (m.group?.name) cats.add(m.group.name);
         else if (m.tags?.[0]) cats.add(m.tags[0]);
       }
-      // Fallback: use category field if exists and only if it's not "Other"
-      else if (m.category && m.category !== "Other" && m.category !== "Uncategorized") {
+      // Fallback: use category if not junk
+      else if (m.category && !["Other", "Uncategorized"].includes(m.category)) {
         cats.add(m.category);
       }
     });
 
-    // Always include "All" at the top
     const sorted = Array.from(cats).sort((a, b) => a.localeCompare(b));
     return ["All", ...sorted];
   }, [markets]);
 
   return (
-    <div className="flex flex-wrap justify-center gap-4 mb-12">
+    <div className="flex flex-wrap justify-center gap-3 mb-12">
       {categories.map((cat) => (
         <button
           key={cat}
           onClick={() => onChange(cat)}
-          className={`px-7 py-3.5 rounded-full font-bold text-sm tracking-wider transition-all duration-300 transform hover:scale-105 shadow-lg ${
+          className={`px-5 py-2.5 rounded-full font-bold text-xs tracking-wider transition-all duration-300 transform hover:scale-105 shadow-md ${
             active === cat
-              ? "bg-gradient-to-r from-primary to-accent text-black ring-4 ring-primary/40 shadow-2xl"
-              : "bg-gray-800/90 text-gray-300 hover:text-white hover:bg-gray-700/90 backdrop-blur-sm"
+              ? "bg-gradient-to-r from-primary to-accent text-black ring-4 ring-primary/40 shadow-xl"
+              : "bg-gray-800/90 text-gray-400 hover:text-white hover:bg-gray-700/90 backdrop-blur-sm"
           }`}
         >
-          {cat === "All" ? "All Markets" : cat}
+          {cat === "All" ? "All Categories" : cat}
         </button>
       ))}
     </div>

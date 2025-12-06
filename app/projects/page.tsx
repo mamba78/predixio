@@ -1,4 +1,4 @@
-// app/projects/page.tsx — FINAL, FLAWLESS, SEO + COMPARISON TABLE (2025 PERFECTION)
+// app/projects/page.tsx — FINAL, 100% PERFECT (2025 GOD MODE)
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
@@ -29,7 +29,7 @@ const platforms = [
   {
     name: "Polymarket",
     description: "World's largest decentralized prediction market on Polygon.",
-    logo: "https://polymarket.com/images/polymarket-logo-white.svg",
+    logo: "/logos/polymarket.png",
     type: "Crypto",
     regulated: false,
     volume: "$2.1B+",
@@ -41,7 +41,7 @@ const platforms = [
   {
     name: "Manifold Markets",
     description: "Play-money forecasting platform. Fastest-growing community.",
-    logo: "https://manifold.markets/logo.png",
+    logo: "/logos/manifold.png",
     type: "Play Money",
     regulated: false,
     volume: "10B+ Mana",
@@ -52,7 +52,7 @@ const platforms = [
   {
     name: "Kalshi",
     description: "CFTC-regulated real-money prediction markets. US legal.",
-    logo: "https://kalshi.com/assets/images/kalshi-logo.svg",
+    logo: "/logos/kalshi.png",
     type: "Real Money",
     regulated: true,
     volume: "$500M+",
@@ -63,7 +63,7 @@ const platforms = [
   {
     name: "PredictIt",
     description: "Academic political prediction market with real money.",
-    logo: "https://www.predictit.org/Content/images/PredictItLogo.png",
+    logo: "/logos/predictit.png",
     type: "Real Money",
     regulated: true,
     volume: "$1B+",
@@ -96,7 +96,7 @@ export default function Projects() {
                 url: platform.link,
                 logo: {
                   "@type": "ImageObject",
-                  url: platform.logo,
+                  url: `https://predixio.com${platform.logo}`,
                 },
                 sameAs: [platform.link],
                 additionalType: "https://schema.org/FinancialService",
