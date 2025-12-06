@@ -1,11 +1,13 @@
 import "@testing-library/jest-dom";
 import { expect, afterEach, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
+import { TextEncoder, TextDecoder } from "util";
 
-// Cleanup after each test
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder as any;
+
 afterEach(() => cleanup());
 
-// MOCK FETCH — THIS IS THE ONLY WAY THAT WORKS 100%
 global.fetch = vi.fn(() =>
   Promise.resolve({
     ok: true,
@@ -13,11 +15,13 @@ global.fetch = vi.fn(() =>
   } as Response)
 );
 
-// MOCK NEXT.JS APP ROUTER — fixes "then is undefined"
-vi.mock("next/navigation", () => ({}));
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "/",
+}));
 vi.mock("next/headers", () => ({}));
 
-// Suppress act warnings (they're harmless in tests)
 const originalError = console.error;
 beforeAll(() => {
   console.error = (...args) => {
