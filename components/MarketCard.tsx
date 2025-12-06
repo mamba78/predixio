@@ -69,22 +69,22 @@ export default function MarketCard({
     </div>
   );
 
-  // LIST VIEW — One-line, DexScreener-killer, FIRE volume
+  // LIST VIEW — Perfect one-line, DexScreener-killer, FIRE volume
   if (!isGrid) {
     return (
       <Link
-        href={market.link || "https://polymarket.com"}
+        href={market.link || process.env.NEXT_PUBLIC_AFFILIATE_POLYMARKET || "https://polymarket.com"}
         target="_blank"
         rel="noopener noreferrer"
         className="group block bg-background border border-border rounded-2xl p-5 hover:border-primary/70 transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
       >
         <div className="flex items-center justify-between gap-6">
-          {/* Title + Category */}
+          {/* Title + Category (perfect alignment) */}
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-lg truncate text-foreground group-hover:text-primary transition">
               {market.title || "Unknown Market"}
             </h3>
-            <div className="text-sm text-primary font-medium">
+            <div className="text-xs text-primary/80 font-medium uppercase tracking-wider">
               {market.category || "Other"}
             </div>
           </div>
@@ -94,9 +94,9 @@ export default function MarketCard({
             <LiquidityBar />
           </div>
 
-          {/* Volume — FIRE when greater than $10M */}
+          {/* Volume — Smaller font, FIRE when greater than $10M */}
           <div className="text-right">
-            <span className="text-2xl font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 bg-clip-text text-transparent">
+            <span className="text-xl font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 bg-clip-text text-transparent">
               {market.volume > 10_000_000 ? "FIRE " : ""}
               {formatVolume(market.volume)}
             </span>
@@ -106,7 +106,7 @@ export default function MarketCard({
     );
   }
 
-  // GRID VIEW — Desktop masterpiece
+  // GRID VIEW — Desktop masterpiece, smaller volume
   return (
     <div className="group relative bg-background border border-border rounded-3xl p-7 hover:border-primary/70 transition-all duration-500 shadow-xl hover:shadow-2xl hover:-translate-y-3 flex flex-col h-full overflow-hidden">
       {/* Platform + Category */}
@@ -131,13 +131,14 @@ export default function MarketCard({
 
       {/* Footer */}
       <div className="flex justify-between items-center pt-5 border-t border-border mt-auto">
-        <span className="text-lg font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 bg-clip-text text-transparent">
+        {/* Volume — Smaller font in grid */}
+        <span className="text-base font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 bg-clip-text text-transparent">
           {market.volume > 10_000_000 ? "FIRE " : ""}
           {formatVolume(market.volume)}
         </span>
 
         <Link
-          href={market.link || "https://polymarket.com"}
+          href={market.link || process.env.NEXT_PUBLIC_AFFILIATE_POLYMARKET || "https://polymarket.com"}
           target="_blank"
           rel="noopener noreferrer"
           className="px-7 py-4 bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full text-sm hover:scale-110 active:scale-95 transition-all duration-300 shadow-2xl hover:shadow-primary/50"

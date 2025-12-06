@@ -114,48 +114,50 @@ Last updated: December 2025`,
 export default function LegalModal() {
   const { open, setOpen } = useModal();
 
-  if (!open || open === null) return null;
+  if (!open) return null;
 
   const { title, body } = content[open];
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="legal-modal-title"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-black/90 backdrop-blur-2xl"
       onClick={() => setOpen(null)}
     >
       <div
-        className="relative max-w-3xl w-full max-h-[85vh] overflow-y-auto bg-gray-950 border border-cyan-500/50 rounded-2xl p-8 shadow-2xl"
+        className="relative max-w-3xl w-full max-h-[90vh] overflow-y-auto bg-gradient-to-br from-gray-950 via-black to-gray-950 border border-primary/40 rounded-3xl p-10 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Subtle glow background */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/20 to-primary/20 blur-3xl" />
+        </div>
+
         {/* Close Button */}
         <button
           onClick={() => setOpen(null)}
-          className="absolute top-6 right-6 p-2 rounded-full bg-gray-800/80 hover:bg-gray-700 transition"
+          className="absolute top-6 right-6 z-10 p-3 rounded-full bg-gray-800/80 hover:bg-gray-700 transition backdrop-blur-sm"
           aria-label="Close modal"
         >
-          <X className="w-5 h-5" />
+          <X className="w-6 h-6 text-gray-300" />
         </button>
 
-        <h2
-          id="legal-modal-title"
-          className="text-3xl font-black bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent mb-8 pr-12"
-        >
+        {/* Title */}
+        <h2 className="relative z-10 text-5xl md:text-6xl font-black bg-gradient-to-r from-primary via-cyan-400 to-accent bg-clip-text text-transparent mb-10 pr-12 leading-tight">
           {title}
         </h2>
 
-        <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed space-y-5">
-          <pre className="whitespace-pre-wrap font-sans text-sm md:text-base">
+        {/* Content */}
+        <div className="relative z-10 prose prose-invert max-w-none text-gray-300 text-base md:text-lg leading-relaxed space-y-6 font-light">
+          <pre className="whitespace-pre-wrap font-sans break-words">
             {body}
           </pre>
         </div>
 
-        <div className="mt-10 text-center">
+        {/* Close Button */}
+        <div className="relative z-10 mt-12 text-center">
           <button
             onClick={() => setOpen(null)}
-            className="px-10 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full hover:scale-105 transition shadow-lg"
+            className="px-12 py-5 bg-gradient-to-r from-primary to-accent text-black font-bold text-xl rounded-full hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl hover:shadow-primary/50"
           >
             Close
           </button>

@@ -1,7 +1,7 @@
-// app/page.tsx — FINAL INFINITE SCROLL MASTERPIECE (NATIVE, ZERO-ERROR GOD MODE)
+// app/page.tsx — FINAL INFINITE SCROLL MASTERPIECE (NATIVE, ZERO-ERROR, 2025 PERFECTION)
 "use client";
 
-import { useState, useEffect, useMemo, useLayoutEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import MarketCard from "@/components/MarketCard";
 import StatsBar from "@/components/StatsBar";
 import CategoryTabs from "@/components/CategoryTabs";
@@ -35,6 +35,7 @@ export default function Home() {
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+  // Fetch markets
   useEffect(() => {
     fetch("/api/markets", { next: { revalidate: 10 } })
       .then(r => r.json())
@@ -45,6 +46,7 @@ export default function Home() {
       .catch(() => setLoading(false));
   }, []);
 
+  // Filter + sort
   const filteredMarkets = useMemo(() => {
     let result = allMarkets
       .filter(m => typeof m.title === "string" && m.title.toLowerCase().includes(search.toLowerCase()))
@@ -63,12 +65,14 @@ export default function Home() {
     return result;
   }, [allMarkets, search, category, sortBy]);
 
+  // Initial load
   useEffect(() => {
     const initial = filteredMarkets.slice(0, PAGE_SIZE);
     setDisplayedMarkets(initial);
     setHasMore(filteredMarkets.length > PAGE_SIZE);
   }, [filteredMarkets]);
 
+  // Load more
   const loadMore = useCallback(async () => {
     if (isLoadingMore || !hasMore) return;
     setIsLoadingMore(true);
@@ -81,10 +85,7 @@ export default function Home() {
     setIsLoadingMore(false);
   }, [displayedMarkets.length, filteredMarkets, isLoadingMore, hasMore]);
 
-  const { ref, inView } = useInView({
-    threshold: 0,
-    triggerOnce: false,
-  });
+  const { ref, inView } = useInView({ threshold: 0.1 });
 
   useEffect(() => {
     if (inView && hasMore && !isLoadingMore) {
@@ -104,10 +105,13 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Main Content */}
       <section className="relative z-20 max-w-7xl mx-auto px-6 pb-32">
-        <div className="space-y-8 mb-10">
+        {/* Controls */}
+        <div className="space-y-8 mb-12">
           <SearchBar value={search} onChange={setSearch} />
-          <div className="flex flex-wrap items-center justify-between gap-4">
+
+          <div className="flex flex-wrap items-center justify-between gap-6">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
@@ -117,20 +121,26 @@ export default function Home() {
               <option value="yes">Highest Yes</option>
               <option value="alpha">A-Z</option>
             </select>
-            <ViewToggle isGrid={isGrid} toggle={() => setIsGrid(!isGrid)} />
+
+            {process.env.NEXT_PUBLIC_ENABLE_VIEW_TOGGLE !== "false" && (
+              <ViewToggle isGrid={isGrid} toggle={() => setIsGrid(!isGrid)} />
+            )}
           </div>
         </div>
 
         <CategoryTabs active={category} onChange={setCategory} markets={allMarkets} />
 
+        {/* Markets */}
         {loading ? (
           <div className={isGrid ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" : "space-y-6"}>
-            {[...Array(12)].map((_, i) => <MarketCardSkeleton key={i} isGrid={isGrid} />)}
+            {[...Array(12)].map((_, i) => (
+              <MarketCardSkeleton key={i} isGrid={isGrid} />
+            ))}
           </div>
         ) : displayedMarkets.length === 0 ? (
-          <div className="text-center py-24">
-            <p className="text-3xl font-bold text-gray-500 mb-4">No markets found</p>
-            <p className="text-gray-400">Try searching "Trump", "Bitcoin", or "Election"</p>
+          <div className="text-center py-32">
+            <p className="text-4xl font-bold text-gray-500 mb-4">No markets found</p>
+            <p className="text-gray-400 text-lg">Try searching "Trump", "Bitcoin", or "Election"</p>
           </div>
         ) : (
           <>
@@ -142,21 +152,22 @@ export default function Home() {
               ))}
             </div>
 
+            {/* Infinite Scroll Trigger */}
             {hasMore && (
-              <div ref={ref} className="py-12 text-center">
+              <div ref={ref} className="py-16 text-center">
                 {isLoadingMore ? (
-                  <div className="inline-block animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary" />
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
                 ) : (
-                  <p className="text-gray-400">Scroll for more</p>
+                  <p className="text-gray-400 text-lg">Scroll for more</p>
                 )}
               </div>
             )}
 
-            {!hasMore && displayedMarkets.length > 0 && (
-              <div className="py-16 text-center text-gray-500">
-                <p className="text-lg">You've reached the end</p>
-              </div>
-            )}
+            {/* End of Results — Always visible */}
+            <div className="py-20 text-center">
+              <p className="text-2xl font-bold text-gray-500">You've reached the end</p>
+              <p className="text-gray-400 mt-4">That's all the markets for now.</p>
+            </div>
           </>
         )}
       </section>
