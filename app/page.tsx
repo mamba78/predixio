@@ -1,12 +1,15 @@
-// app/page.tsx — FINAL VERSION (WORKS ON GITHUB PAGES + VERCEL)
+// app/page.tsx — FINAL INFINITE SCROLL MASTERPIECE (NATIVE, ZERO-ERROR GOD MODE)
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useLayoutEffect, useRef, useCallback } from "react";
 import MarketCard from "@/components/MarketCard";
 import StatsBar from "@/components/StatsBar";
 import CategoryTabs from "@/components/CategoryTabs";
 import ViewToggle from "@/components/ViewToggle";
 import MarketCardSkeleton from "@/components/MarketCardSkeleton";
+import SearchBar from "@/components/SearchBar";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { useInView } from "react-intersection-observer";
 
 type Market = {
   title: string;
@@ -18,42 +21,79 @@ type Market = {
   link: string;
 };
 
+const PAGE_SIZE = 30;
+
 export default function Home() {
-  const [markets, setMarkets] = useState<Market[]>([]);
+  const [allMarkets, setAllMarkets] = useState<Market[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [isGrid, setIsGrid] = useState(true);
   const [sortBy, setSortBy] = useState<"volume" | "yes" | "alpha">("volume");
   const [loading, setLoading] = useState(true);
 
-  // Fetch markets
+  const [displayedMarkets, setDisplayedMarkets] = useState<Market[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
   useEffect(() => {
-    fetch("/api/markets")
+    fetch("/api/markets", { next: { revalidate: 10 } })
       .then(r => r.json())
       .then(data => {
-        setMarkets(data || []);
+        setAllMarkets(data || []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
 
-  // Filter + Sort
   const filteredMarkets = useMemo(() => {
-    let result = markets
-      .filter(m => m.title.toLowerCase().includes(search.toLowerCase()))
+    let result = allMarkets
+      .filter(m => typeof m.title === "string" && m.title.toLowerCase().includes(search.toLowerCase()))
       .filter(m => category === "All" || m.category === category);
 
     result.sort((a, b) => {
       if (sortBy === "volume") return (b.volume || 0) - (a.volume || 0);
-      if (sortBy === "yes") return parseFloat(b.yes_price || "0") - parseFloat(a.yes_price || "0");
+      if (sortBy === "yes") {
+        const aYes = parseFloat(a.yes_price ?? "0") || 0;
+        const bYes = parseFloat(b.yes_price ?? "0") || 0;
+        return bYes - aYes;
+      }
       return a.title.localeCompare(b.title);
     });
 
     return result;
-  }, [markets, search, category, sortBy]);
+  }, [allMarkets, search, category, sortBy]);
+
+  useEffect(() => {
+    const initial = filteredMarkets.slice(0, PAGE_SIZE);
+    setDisplayedMarkets(initial);
+    setHasMore(filteredMarkets.length > PAGE_SIZE);
+  }, [filteredMarkets]);
+
+  const loadMore = useCallback(async () => {
+    if (isLoadingMore || !hasMore) return;
+    setIsLoadingMore(true);
+    await new Promise(r => setTimeout(r, 400));
+    const nextStart = displayedMarkets.length;
+    const nextEnd = nextStart + PAGE_SIZE;
+    const nextItems = filteredMarkets.slice(nextStart, nextEnd);
+    setDisplayedMarkets(prev => [...prev, ...nextItems]);
+    setHasMore(nextEnd < filteredMarkets.length);
+    setIsLoadingMore(false);
+  }, [displayedMarkets.length, filteredMarkets, isLoadingMore, hasMore]);
+
+  const { ref, inView } = useInView({
+    threshold: 0,
+    triggerOnce: false,
+  });
+
+  useEffect(() => {
+    if (inView && hasMore && !isLoadingMore) {
+      loadMore();
+    }
+  }, [inView, hasMore, isLoadingMore, loadMore]);
 
   return (
-    <>
+    <ErrorBoundary>
       {/* Hero */}
       <section className="relative py-24 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
@@ -65,23 +105,13 @@ export default function Home() {
       </section>
 
       <section className="relative z-20 max-w-7xl mx-auto px-6 pb-32">
-        <div className="flex flex-col lg:flex-row gap-6 items-center justify-between mb-10">
-          <div className="relative flex-1 max-w-xl">
-            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 text-lg">Search</span>
-            <input
-              type="text"
-              placeholder="Search any market..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-16 pr-6 py-5 bg-gray-900/90 border border-gray-800 rounded-2xl text-lg focus:outline-none focus:border-primary transition"
-            />
-          </div>
-
-          <div className="flex gap-4">
+        <div className="space-y-8 mb-10">
+          <SearchBar value={search} onChange={setSearch} />
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-6 py-4 bg-gray-900/90 border border-gray-800 rounded-2xl focus:outline-none focus:border-primary"
+              className="px-6 py-4 bg-gray-900/90 border border-gray-800 rounded-2xl focus:outline-none focus:border-primary text-base min-w-[200px]"
             >
               <option value="volume">Highest Volume</option>
               <option value="yes">Highest Yes</option>
@@ -91,26 +121,45 @@ export default function Home() {
           </div>
         </div>
 
-        <CategoryTabs active={category} onChange={setCategory} markets={markets} />
+        <CategoryTabs active={category} onChange={setCategory} markets={allMarkets} />
 
-        {/* Simple, fast, working grid/list */}
-        <div className={isGrid
-          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-          : "space-y-6"
-        }>
-          {loading ? (
-            [...Array(12)].map((_, i) => <MarketCardSkeleton key={i} isGrid={isGrid} />)
-          ) : filteredMarkets.length === 0 ? (
-            <div className="col-span-full text-center py-24 text-2xl text-gray-500">
-              No markets found
+        {loading ? (
+          <div className={isGrid ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" : "space-y-6"}>
+            {[...Array(12)].map((_, i) => <MarketCardSkeleton key={i} isGrid={isGrid} />)}
+          </div>
+        ) : displayedMarkets.length === 0 ? (
+          <div className="text-center py-24">
+            <p className="text-3xl font-bold text-gray-500 mb-4">No markets found</p>
+            <p className="text-gray-400">Try searching "Trump", "Bitcoin", or "Election"</p>
+          </div>
+        ) : (
+          <>
+            <div className={isGrid ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" : "space-y-6"}>
+              {displayedMarkets.map(market => (
+                <ErrorBoundary key={market.link}>
+                  <MarketCard market={market} isGrid={isGrid} />
+                </ErrorBoundary>
+              ))}
             </div>
-          ) : (
-            filteredMarkets.map((market) => (
-              <MarketCard key={market.title} market={market} isGrid={isGrid} />
-            ))
-          )}
-        </div>
+
+            {hasMore && (
+              <div ref={ref} className="py-12 text-center">
+                {isLoadingMore ? (
+                  <div className="inline-block animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary" />
+                ) : (
+                  <p className="text-gray-400">Scroll for more</p>
+                )}
+              </div>
+            )}
+
+            {!hasMore && displayedMarkets.length > 0 && (
+              <div className="py-16 text-center text-gray-500">
+                <p className="text-lg">You've reached the end</p>
+              </div>
+            )}
+          </>
+        )}
       </section>
-    </>
+    </ErrorBoundary>
   );
 }

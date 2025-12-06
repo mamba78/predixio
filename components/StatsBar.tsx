@@ -21,8 +21,8 @@ export default function StatsBar({ className = "" }) {
   useEffect(() => {
     // Try to fetch real-time stats (you can create /api/stats later)
     fetch("/api/stats")
-      .then(r => r.json())
-      .then(data => {
+      .then((r) => r.json())
+      .then((data) => {
         setStats({
           platforms: data.platforms || 1,
           markets: data.markets || 1247,
@@ -50,7 +50,7 @@ export default function StatsBar({ className = "" }) {
   if (isLoading) {
     return (
       <div className={`grid grid-cols-3 gap-8 text-center ${className}`}>
-        {[1, 2, 3].map(i => (
+        {[1, 2, 3].map((i) => (
           <div key={i} className="animate-pulse">
             <div className="h-12 bg-gray-800 rounded w-24 mx-auto mb-2" />
             <div className="h-4 bg-gray-800 rounded w-20 mx-auto" />
@@ -61,7 +61,9 @@ export default function StatsBar({ className = "" }) {
   }
 
   return (
-    <div className={`grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-12 text-center ${className}`}>
+    <div
+      className={`grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-12 text-center ${className}`}
+    >
       {/* Platforms */}
       <div className="group">
         <div className="text-4xl sm:text-5xl lg:text-6xl font-black bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">

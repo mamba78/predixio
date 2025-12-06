@@ -1,6 +1,8 @@
-'use client';
+// components/LegalModal.tsx
+"use client";
 
 import { create } from "zustand";
+import { X } from "lucide-react";
 
 type ModalType = "terms" | "privacy" | "cookies" | "disclaimer" | null;
 
@@ -14,13 +16,10 @@ const useModal = create<ModalStore>((set) => ({
   setOpen: (type) => set({ open: type }),
 }));
 
-export default function LegalModal() {
-  const { open, setOpen } = useModal();
-
-  const content = {
-    terms: {
-      title: "Terms of Service",
-      body: `By accessing Predixio ("Service"), you agree to be bound by these Terms. If you disagree, do not use the Service.
+const content = {
+  terms: {
+    title: "Terms of Service",
+    body: `By accessing Predixio ("Service"), you agree to be bound by these Terms. If you disagree, do not use the Service.
 
 1. Nature of Service  
 Predixio is a non-custodial data aggregator that displays publicly available prediction market information. We do not facilitate bets, hold funds, or operate as a prediction market.
@@ -41,10 +40,10 @@ Users from restricted countries where prediction markets are illegal are prohibi
 To the fullest extent permitted by law, Predixio and its operators shall not be liable for any indirect, incidental, or consequential damages.
 
 Last updated: December 5, 2025`,
-    },
-    privacy: {
-      title: "Privacy Policy",
-      body: `Predixio collects zero personal data by default.
+  },
+  privacy: {
+    title: "Privacy Policy",
+    body: `Predixio collects zero personal data by default.
 
 1. No Accounts  
 No user accounts, emails, or KYC required.
@@ -62,10 +61,10 @@ When you click affiliate links, those platforms set their own cookies (we have n
 We never sell data. Period.
 
 Last updated: December 5, 2025`,
-    },
-    cookies: {
-      title: "Cookie Policy",
-      body: `Predixio uses zero first-party cookies.
+  },
+  cookies: {
+    title: "Cookie Policy",
+    body: `Predixio uses zero first-party cookies.
 
 1. Essential  
 Local storage for theme preference (dark/light mode only).
@@ -80,10 +79,10 @@ Affiliate links may set cookies when clicked (controlled by partners like Polyma
 Clear browser cookies or use ad blockers anytime.
 
 Last updated: December 5, 2025`,
-    },
-    disclaimer: {
-      title: "Disclaimer",
-      body: `Predixio is not a gambling or prediction-market platform.
+  },
+  disclaimer: {
+    title: "Disclaimer",
+    body: `Predixio is not a gambling or prediction-market platform.
 
 1. Independent Aggregator  
 We only display publicly available market data. You are solely responsible for activity on third-party platforms.
@@ -95,26 +94,58 @@ Data is provided "as is" without guarantee of accuracy or completeness.
 Prediction markets involve substantial risk. Consult a financial advisor before trading.
 
 Last updated: December 5, 2025`,
-    },
-  };
+  },
+} as const;
+
+export default function LegalModal() {
+  const { open, setOpen } = useModal();
 
   if (!open) return null;
 
+  const { title, body } = content[open];
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setOpen(null)}>
-      <div className="max-w-3xl w-full max-h-[85vh] overflow-y-auto bg-gray-950 border border-cyan-500/50 rounded-2xl p-8" onClick={(e) => e.stopPropagation()}>
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent mb-6">
-          {content[open].title}
-        </h2>
-        <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed prose-p:mb-4 prose-h2:text-xl prose-h2:font-bold prose-h2:mb-3 prose-h2:text-cyan-400">
-          <p className="whitespace-pre-wrap">{content[open].body}</p>
-        </div>
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="legal-modal-title"
+      onClick={() => setOpen(null)}
+    >
+      <div
+        className="relative max-w-3xl w-full max-h-[85vh] overflow-y-auto bg-gray-950 border border-cyan-500/50 rounded-2xl p-8 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close Button – Top Right */}
         <button
           onClick={() => setOpen(null)}
-          className="mt-8 px-8 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full hover:scale-105 transition"
+          className="absolute top-6 right-6 p-2 rounded-full bg-gray-800/80 hover:bg-gray-700 transition"
+          aria-label="Close modal"
         >
-          Close
+          <X className="w-5 h-5" />
         </button>
+
+        <h2
+          id="legal-modal-title"
+          className="text-3xl font-black bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent mb-8 pr-12"
+        >
+          {title}
+        </h2>
+
+        <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed space-y-5">
+          <pre className="whitespace-pre-wrap font-sans text-sm md:text-base">
+            {body}
+          </pre>
+        </div>
+
+        <div className="mt-10 text-center">
+          <button
+            onClick={() => setOpen(null)}
+            className="px-10 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold rounded-full hover:scale-105 transition shadow-lg"
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );

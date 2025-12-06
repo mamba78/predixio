@@ -1,1 +1,322 @@
-if(!self.define){let e,s={};const c=(c,i)=>(c=new URL(c+".js",i).href,s[c]||new Promise(s=>{if("document"in self){const e=document.createElement("script");e.src=c,e.onload=s,document.head.appendChild(e)}else e=c,importScripts(c),s()}).then(()=>{let e=s[c];if(!e)throw new Error(`Module ${c} didn’t register its module`);return e}));self.define=(i,t)=>{const a=e||("document"in self?document.currentScript.src:"")||location.href;if(s[a])return;let n={};const r=e=>c(e,a),o={module:{uri:a},exports:n,require:r};s[a]=Promise.all(i.map(e=>o[e]||r(e))).then(e=>(t(...e),n))}}define(["./workbox-5b6cf1e5"],function(e){"use strict";importScripts(),self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"/_next/app-build-manifest.json",revision:"59a0de98bab1d996543a5908194404c0"},{url:"/_next/static/Oho1joTKXjcgOrLkRQ5Ff/_buildManifest.js",revision:"c155cce658e53418dec34664328b51ac"},{url:"/_next/static/Oho1joTKXjcgOrLkRQ5Ff/_ssgManifest.js",revision:"b6652df95db52feb4daf4eca35380933"},{url:"/_next/static/chunks/117-284b9a126ec9f97c.js",revision:"Oho1joTKXjcgOrLkRQ5Ff"},{url:"/_next/static/chunks/972-80ba5977b629e28e.js",revision:"Oho1joTKXjcgOrLkRQ5Ff"},{url:"/_next/static/chunks/app/_not-found/page-c1bbe1b4bc8170a6.js",revision:"Oho1joTKXjcgOrLkRQ5Ff"},{url:"/_next/static/chunks/app/layout-429c75b1bf3d7ac2.js",revision:"Oho1joTKXjcgOrLkRQ5Ff"},{url:"/_next/static/chunks/app/not-found-60738087b0f046c4.js",revision:"Oho1joTKXjcgOrLkRQ5Ff"},{url:"/_next/static/chunks/app/page-6d8085b048cad181.js",revision:"Oho1joTKXjcgOrLkRQ5Ff"},{url:"/_next/static/chunks/fd9d1056-0075a5a2576898b8.js",revision:"Oho1joTKXjcgOrLkRQ5Ff"},{url:"/_next/static/chunks/framework-f66176bb897dc684.js",revision:"Oho1joTKXjcgOrLkRQ5Ff"},{url:"/_next/static/chunks/main-app-a6b4f05fb5696596.js",revision:"Oho1joTKXjcgOrLkRQ5Ff"},{url:"/_next/static/chunks/main-c29f04bf58cb7b44.js",revision:"Oho1joTKXjcgOrLkRQ5Ff"},{url:"/_next/static/chunks/pages/_app-72b849fbd24ac258.js",revision:"Oho1joTKXjcgOrLkRQ5Ff"},{url:"/_next/static/chunks/pages/_error-7ba65e1336b92748.js",revision:"Oho1joTKXjcgOrLkRQ5Ff"},{url:"/_next/static/chunks/polyfills-42372ed130431b0a.js",revision:"846118c33b2c0e922d7b3a7676f81f6f"},{url:"/_next/static/chunks/webpack-244cd0eaa558aba1.js",revision:"Oho1joTKXjcgOrLkRQ5Ff"},{url:"/_next/static/css/38879582df878e8c.css",revision:"38879582df878e8c"},{url:"/_next/static/media/19cfc7226ec3afaa-s.woff2",revision:"9dda5cfc9a46f256d0e131bb535e46f8"},{url:"/_next/static/media/21350d82a1f187e9-s.woff2",revision:"4e2553027f1d60eff32898367dd4d541"},{url:"/_next/static/media/8e9860b6e62d6359-s.woff2",revision:"01ba6c2a184b8cba08b0d57167664d75"},{url:"/_next/static/media/ba9851c3c22cd980-s.woff2",revision:"9e494903d6b0ffec1a1e14d34427d44d"},{url:"/_next/static/media/c5fe6dc8356a8c31-s.woff2",revision:"027a89e9ab733a145db70f09b8a18b42"},{url:"/_next/static/media/df0a9ae256c0569c-s.woff2",revision:"d54db44de5ccb18886ece2fda72bdfe0"},{url:"/_next/static/media/e4af272ccee01ff0-s.p.woff2",revision:"65850a373e258f1c897a2b3d75eb74de"},{url:"/manifest.json",revision:"43da30a583098c77925706989747a690"}],{ignoreURLParametersMatching:[]}),e.cleanupOutdatedCaches(),e.registerRoute("/",new e.NetworkFirst({cacheName:"start-url",plugins:[{cacheWillUpdate:async({request:e,response:s,event:c,state:i})=>s&&"opaqueredirect"===s.type?new Response(s.body,{status:200,statusText:"OK",headers:s.headers}):s}]}),"GET"),e.registerRoute(/^https:\/\/clob\.polymarket\.com\/.*/i,new e.NetworkFirst({cacheName:"polymarket-api",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:60})]}),"GET"),e.registerRoute(/\.(?:png|jpg|jpeg|svg|webp|avif|ico)$/i,new e.CacheFirst({cacheName:"images",plugins:[new e.ExpirationPlugin({maxEntries:100,maxAgeSeconds:31536e3})]}),"GET")});
+if (!self.define) {
+  let e,
+    s = {};
+  const a = (a, n) => (
+    (a = new URL(a + ".js", n).href),
+    s[a] ||
+      new Promise((s) => {
+        if ("document" in self) {
+          const e = document.createElement("script");
+          (e.src = a), (e.onload = s), document.head.appendChild(e);
+        } else (e = a), importScripts(a), s();
+      }).then(() => {
+        let e = s[a];
+        if (!e) throw new Error(`Module ${a} didn’t register its module`);
+        return e;
+      })
+  );
+  self.define = (n, c) => {
+    const t =
+      e ||
+      ("document" in self ? document.currentScript.src : "") ||
+      location.href;
+    if (s[t]) return;
+    let i = {};
+    const o = (e) => a(e, t),
+      r = { module: { uri: t }, exports: i, require: o };
+    s[t] = Promise.all(n.map((e) => r[e] || o(e))).then((e) => (c(...e), i));
+  };
+}
+define(["./workbox-7590b6de"], function (e) {
+  "use strict";
+  importScripts(),
+    self.skipWaiting(),
+    e.clientsClaim(),
+    e.precacheAndRoute(
+      [
+        {
+          url: "/_next/app-build-manifest.json",
+          revision: "fdc11332b016a05a0a7d95eb8468510e",
+        },
+        {
+          url: "/_next/static/Kc1V8MudyekyG9cGE4KC1/_buildManifest.js",
+          revision: "c155cce658e53418dec34664328b51ac",
+        },
+        {
+          url: "/_next/static/Kc1V8MudyekyG9cGE4KC1/_ssgManifest.js",
+          revision: "b6652df95db52feb4daf4eca35380933",
+        },
+        {
+          url: "/_next/static/chunks/117-ae3caa9c0709863f.js",
+          revision: "Kc1V8MudyekyG9cGE4KC1",
+        },
+        {
+          url: "/_next/static/chunks/487-eafa17cbd01eae5c.js",
+          revision: "Kc1V8MudyekyG9cGE4KC1",
+        },
+        {
+          url: "/_next/static/chunks/972-dca2a594ceaebe3e.js",
+          revision: "Kc1V8MudyekyG9cGE4KC1",
+        },
+        {
+          url: "/_next/static/chunks/app/_not-found/page-c1bbe1b4bc8170a6.js",
+          revision: "Kc1V8MudyekyG9cGE4KC1",
+        },
+        {
+          url: "/_next/static/chunks/app/layout-40fc45b7546bafe9.js",
+          revision: "Kc1V8MudyekyG9cGE4KC1",
+        },
+        {
+          url: "/_next/static/chunks/app/not-found-60738087b0f046c4.js",
+          revision: "Kc1V8MudyekyG9cGE4KC1",
+        },
+        {
+          url: "/_next/static/chunks/app/page-6ecd01d00b67f177.js",
+          revision: "Kc1V8MudyekyG9cGE4KC1",
+        },
+        {
+          url: "/_next/static/chunks/fd9d1056-d03bf3151068ecfc.js",
+          revision: "Kc1V8MudyekyG9cGE4KC1",
+        },
+        {
+          url: "/_next/static/chunks/framework-f66176bb897dc684.js",
+          revision: "Kc1V8MudyekyG9cGE4KC1",
+        },
+        {
+          url: "/_next/static/chunks/main-app-a6b4f05fb5696596.js",
+          revision: "Kc1V8MudyekyG9cGE4KC1",
+        },
+        {
+          url: "/_next/static/chunks/main-e28ebdd3284d6989.js",
+          revision: "Kc1V8MudyekyG9cGE4KC1",
+        },
+        {
+          url: "/_next/static/chunks/pages/_app-72b849fbd24ac258.js",
+          revision: "Kc1V8MudyekyG9cGE4KC1",
+        },
+        {
+          url: "/_next/static/chunks/pages/_error-7ba65e1336b92748.js",
+          revision: "Kc1V8MudyekyG9cGE4KC1",
+        },
+        {
+          url: "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+          revision: "846118c33b2c0e922d7b3a7676f81f6f",
+        },
+        {
+          url: "/_next/static/chunks/webpack-244cd0eaa558aba1.js",
+          revision: "Kc1V8MudyekyG9cGE4KC1",
+        },
+        {
+          url: "/_next/static/css/e1df3321d5e4ad78.css",
+          revision: "e1df3321d5e4ad78",
+        },
+        {
+          url: "/_next/static/media/19cfc7226ec3afaa-s.woff2",
+          revision: "9dda5cfc9a46f256d0e131bb535e46f8",
+        },
+        {
+          url: "/_next/static/media/21350d82a1f187e9-s.woff2",
+          revision: "4e2553027f1d60eff32898367dd4d541",
+        },
+        {
+          url: "/_next/static/media/8e9860b6e62d6359-s.woff2",
+          revision: "01ba6c2a184b8cba08b0d57167664d75",
+        },
+        {
+          url: "/_next/static/media/ba9851c3c22cd980-s.woff2",
+          revision: "9e494903d6b0ffec1a1e14d34427d44d",
+        },
+        {
+          url: "/_next/static/media/c5fe6dc8356a8c31-s.woff2",
+          revision: "027a89e9ab733a145db70f09b8a18b42",
+        },
+        {
+          url: "/_next/static/media/df0a9ae256c0569c-s.woff2",
+          revision: "d54db44de5ccb18886ece2fda72bdfe0",
+        },
+        {
+          url: "/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+          revision: "65850a373e258f1c897a2b3d75eb74de",
+        },
+        { url: "/manifest.json", revision: "43da30a583098c77925706989747a690" },
+      ],
+      { ignoreURLParametersMatching: [] },
+    ),
+    e.cleanupOutdatedCaches(),
+    e.registerRoute(
+      "/",
+      new e.NetworkFirst({
+        cacheName: "start-url",
+        plugins: [
+          {
+            cacheWillUpdate: async ({
+              request: e,
+              response: s,
+              event: a,
+              state: n,
+            }) =>
+              s && "opaqueredirect" === s.type
+                ? new Response(s.body, {
+                    status: 200,
+                    statusText: "OK",
+                    headers: s.headers,
+                  })
+                : s,
+          },
+        ],
+      }),
+      "GET",
+    ),
+    e.registerRoute(
+      /^https:\/\/fonts\.(?:gstatic)\.com\/.*/i,
+      new e.CacheFirst({
+        cacheName: "google-fonts-webfonts",
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 4, maxAgeSeconds: 31536e3 }),
+        ],
+      }),
+      "GET",
+    ),
+    e.registerRoute(
+      /^https:\/\/fonts\.(?:googleapis)\.com\/.*/i,
+      new e.StaleWhileRevalidate({
+        cacheName: "google-fonts-stylesheets",
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 4, maxAgeSeconds: 604800 }),
+        ],
+      }),
+      "GET",
+    ),
+    e.registerRoute(
+      /\.(?:eot|otf|ttc|ttf|woff|woff2|font.css)$/i,
+      new e.StaleWhileRevalidate({
+        cacheName: "static-font-assets",
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 4, maxAgeSeconds: 604800 }),
+        ],
+      }),
+      "GET",
+    ),
+    e.registerRoute(
+      /\.(?:jpg|jpeg|gif|png|svg|ico|webp)$/i,
+      new e.StaleWhileRevalidate({
+        cacheName: "static-image-assets",
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 64, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      "GET",
+    ),
+    e.registerRoute(
+      /\/_next\/image\?url=.+$/i,
+      new e.StaleWhileRevalidate({
+        cacheName: "next-image",
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 64, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      "GET",
+    ),
+    e.registerRoute(
+      /\.(?:mp3|wav|ogg)$/i,
+      new e.CacheFirst({
+        cacheName: "static-audio-assets",
+        plugins: [
+          new e.RangeRequestsPlugin(),
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      "GET",
+    ),
+    e.registerRoute(
+      /\.(?:mp4)$/i,
+      new e.CacheFirst({
+        cacheName: "static-video-assets",
+        plugins: [
+          new e.RangeRequestsPlugin(),
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      "GET",
+    ),
+    e.registerRoute(
+      /\.(?:js)$/i,
+      new e.StaleWhileRevalidate({
+        cacheName: "static-js-assets",
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      "GET",
+    ),
+    e.registerRoute(
+      /\.(?:css|less)$/i,
+      new e.StaleWhileRevalidate({
+        cacheName: "static-style-assets",
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      "GET",
+    ),
+    e.registerRoute(
+      /\/_next\/data\/.+\/.+\.json$/i,
+      new e.StaleWhileRevalidate({
+        cacheName: "next-data",
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      "GET",
+    ),
+    e.registerRoute(
+      /\.(?:json|xml|csv)$/i,
+      new e.NetworkFirst({
+        cacheName: "static-data-assets",
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      "GET",
+    ),
+    e.registerRoute(
+      ({ url: e }) => {
+        if (!(self.origin === e.origin)) return !1;
+        const s = e.pathname;
+        return !s.startsWith("/api/auth/") && !!s.startsWith("/api/");
+      },
+      new e.NetworkFirst({
+        cacheName: "apis",
+        networkTimeoutSeconds: 10,
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 16, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      "GET",
+    ),
+    e.registerRoute(
+      ({ url: e }) => {
+        if (!(self.origin === e.origin)) return !1;
+        return !e.pathname.startsWith("/api/");
+      },
+      new e.NetworkFirst({
+        cacheName: "others",
+        networkTimeoutSeconds: 10,
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      "GET",
+    ),
+    e.registerRoute(
+      ({ url: e }) => !(self.origin === e.origin),
+      new e.NetworkFirst({
+        cacheName: "cross-origin",
+        networkTimeoutSeconds: 10,
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 3600 }),
+        ],
+      }),
+      "GET",
+    );
+});

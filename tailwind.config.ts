@@ -14,8 +14,8 @@ const config: Config = {
     extend: {
       colors: {
         // Core brand colors (used in CSS variables)
-        primary: "#00f5ff",   // Electric cyan
-        accent: "#d700ff",    // Neon purple
+        primary: "#00f5ff", // Electric cyan
+        accent: "#d700ff", // Neon purple
 
         // Semantic colors – automatically adapt in light/dark
         background: "var(--bg-primary, #000000)",
@@ -34,7 +34,8 @@ const config: Config = {
       },
 
       backgroundImage: {
-        "gradient-radial": "radial-gradient(circle at 20% 10%, rgba(0, 245, 255, 0.1), transparent 50%)",
+        "gradient-radial":
+          "radial-gradient(circle at 20% 10%, rgba(0, 245, 255, 0.1), transparent 50%)",
         "gradient-hero": "linear-gradient(to right, #00f5ff, #d700ff)",
       },
 

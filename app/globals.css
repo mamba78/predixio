@@ -1,83 +1,99 @@
-/* app/globals.css */
+/* app/globals.css — THE FINAL FORM */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ==================== BASE STYLES ==================== */
+/* ==================== PERFORMANCE & MOBILE FIRST ==================== */
 @layer base {
   :root {
     --bg-primary: #000000;
     --text-primary: #ffffff;
     --border-primary: #1a1a1a;
-    --card-bg: rgba(10, 10, 10, 0.8);
+    --card-bg: rgba(10, 10, 10, 0.9);
+    --radius: 1.5rem;
   }
 
   [data-theme="light"] {
-    --bg-primary: #f8f9fa;
+    --bg-primary: #ffffff;
     --text-primary: #111111;
     --border-primary: #e0e0e0;
-    --card-bg: rgba(255, 255, 255, 0.95);
+    --card-bg: rgba(255, 255, 255, 0.96);
   }
 
   html {
     @apply scroll-smooth;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
     @apply min-h-screen font-sans antialiased transition-colors duration-300;
     background: var(--bg-primary);
     color: var(--text-primary);
-    background-image: radial-gradient(circle at 20% 10%, rgba(0, 245, 255, 0.08), transparent 50%),
-                      radial-gradient(circle at 80% 80%, rgba(215, 0, 255, 0.06), transparent 50%);
+    background-image:
+      radial-gradient(
+        circle at 20% 10%,
+        rgba(0, 245, 255, 0.08),
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 80%,
+        rgba(215, 0, 255, 0.06),
+        transparent 50%
+      );
+    background-attachment: fixed;
   }
 
-  /* Fix font rendering on all devices */
+  /* Ultra-smooth font rendering */
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
-  /* Safe area padding for mobile (iOS notch + Android) */
+  /* Safe area for mobile */
   .pb-safe {
     padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+
+  /* Prevent zoom on input focus (iOS) */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
   }
 }
 
 /* ==================== COMPONENTS ==================== */
 @layer components {
-  /* Hero gradient text */
+  /* Hero text */
   .hero-gradient {
     @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-black;
   }
 
-  /* Gradient buttons */
+  /* Premium buttons */
   .btn-gradient {
-    @apply bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full hover:scale-105 transition-all shadow-lg hover:shadow-primary/50;
+    @apply bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full hover:scale-105 active:scale-95 transition-all duration-200 shadow-xl hover:shadow-primary/50;
   }
 
-  /* Card base */
+  /* Cards */
   .card {
-    @apply bg-[var(--card-bg)] border border-[var(--border-primary)] backdrop-blur-xl rounded-2xl transition-all duration-300;
+    @apply bg-[var(--card-bg)] border border-[var(--border-primary)] backdrop-blur-xl rounded-[var(--radius)] transition-all duration-300;
   }
 
-  /* Liquidity bar text readable in both themes */
+  /* Market card hover lift */
+  .market-card-hover {
+    @apply hover:-translate-y-2 hover:shadow-2xl transition-all duration-300;
+  }
+
+  /* Liquidity text */
   .liquidity-text {
-    @apply font-bold text-white drop-shadow-md mix-blend-overlay;
+    @apply font-bold text-white drop-shadow-2xl mix-blend-overlay;
   }
 }
 
 /* ==================== UTILITIES ==================== */
 @layer utilities {
-  /* Remove default margin */
-  .mt-20 { margin-top: 0 !important; }
-
-  /* Scroll margin for anchor links */
-  * {
-    scroll-margin-top: 100px;
-    scroll-margin-bottom: 120px;
-  }
-
-  /* Hide scrollbar but keep functionality */
+  /* Hide scrollbar */
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -86,30 +102,69 @@
     display: none;
   }
 
-  /* Text gradient */
-  .text-gradient {
+  /* Text gradients */
+  .text-gradient-primary {
     @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+
+  /* Focus ring */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/30;
+  }
+
+  /* Glass morphism */
+  .glass {
+    @apply bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10;
   }
 }
 
-/* ==================== DARK MODE OVERRIDES ==================== */
+/* ==================== DARK MODE PERFECTION ==================== */
 .dark {
   --bg-primary: #000000;
   --text-primary: #ffffff;
   --border-primary: #1f1f1f;
-  --card-bg: rgba(15, 15, 15, 0.9);
+  --card-bg: rgba(15, 15, 15, 0.95);
 }
 
 .dark .card {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
 }
 
-/* Light mode card glow */
 [data-theme="light"] .card {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
 }
 
-/* Focus styles for accessibility */
-.focus-visible-ring:focus-visible {
-  @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-black dark:ring-offset-black;
+/* ==================== MOBILE OPTIMIZATIONS ==================== */
+/* Smooth scrolling on mobile */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .card {
+    border-width: 3px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none;
+  }
+  body {
+    background: white;
+    color: black;
+  }
 }
