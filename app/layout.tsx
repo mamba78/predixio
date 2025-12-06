@@ -39,7 +39,7 @@ export const metadata = {
   alternates: { canonical: "/" },
   openGraph: {
     title: "Predixio – All Prediction Markets in One Place",
-    description: "Real-time prices, volume, liquidity — Polymarket + Kalshi + more",
+    description: "Real-time prices, volume, liquidity — Polymarket + Kalshi + Manifold + more",
     url: "https://predixio.com",
     siteName: "Predixio",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "Predixio" }],
@@ -49,7 +49,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Predixio – Real-Time Prediction Markets",
-    description: "Polymarket + Kalshi + all platforms in one dashboard",
+    description: "Polymarket + Kalshi + Manifold + all platforms in one dashboard",
     images: ["/og.png"],
     creator: "@predixio",
   },
@@ -91,11 +91,40 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preload" href="/api/markets" as="fetch" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://gamma-api.polymarket.com" />
         <link rel="preconnect" href="https://clob.polymarket.com" />
+        <link rel="preconnect" href="https://manifold.markets" />
 
         {/* Block TronLink spam */}
         <script
           dangerouslySetInnerHTML={{
             __html: `window.TronLink={disabled:true};`,
+          }}
+        />
+
+        {/* STRUCTURED DATA — SEO GOD MODE */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Predixio",
+              url: "https://predixio.com",
+              description: "Real-time prediction market dashboard aggregating Polymarket, Manifold, Kalshi and more.",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: "https://predixio.com/?search={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+              inLanguage: "en-US",
+              publisher: {
+                "@type": "Organization",
+                name: "Predixio",
+                logo: {
+                  "@type": "ImageObject",
+                  url: "https://predixio.com/og.png",
+                },
+              },
+            }),
           }}
         />
       </head>
@@ -104,12 +133,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          enableSystem
+          enableSystem={true}
           disableTransitionOnChange
         >
           <Navbar />
 
-          {/* Main content — perfect spacing */}
+          {/* Main content */}
           <main className="flex-1 pt-20 pb-24 md:pb-20">
             {children}
           </main>
@@ -121,7 +150,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </footer>
 
-          {/* All modals — About + Legal */}
+          {/* All modals */}
           <LegalModal />
           <AboutModal />
         </ThemeProvider>

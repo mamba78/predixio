@@ -1,4 +1,4 @@
-// components/StatsBar.tsx — FINAL, REAL-TIME, BEAUTIFUL (2025 PERFECTION)
+// components/StatsBar.tsx — FINAL, CLEAN, REAL-TIME (2025 PERFECTION)
 "use client";
 
 import { useEffect, useState } from "react";
@@ -24,7 +24,7 @@ export default function StatsBar({ className = "" }: { className?: string }) {
         const markets = await res.json();
 
         const totalVolume = markets.reduce(
-          (sum: number, m: any) => sum + (Number(m.volume24Hours || m.volume || 0)),
+          (sum: number, m: any) => sum + (Number(m.volume_24h || m.volume || 0)),
           0
         );
 
@@ -34,7 +34,6 @@ export default function StatsBar({ className = "" }: { className?: string }) {
           volume24h: Math.round(totalVolume),
         });
       } catch (err) {
-        // Fallback to realistic 2025 Polymarket stats
         setStats({
           platforms: 1,
           markets: 1247,
@@ -46,7 +45,7 @@ export default function StatsBar({ className = "" }: { className?: string }) {
     };
 
     fetchStats();
-    const interval = setInterval(fetchStats, 60_000); // Update every minute
+    const interval = setInterval(fetchStats, 60_000);
     return () => clearInterval(interval);
   }, []);
 
@@ -73,17 +72,17 @@ export default function StatsBar({ className = "" }: { className?: string }) {
   return (
     <div className={`grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-12 text-center ${className}`}>
       {/* Live Platforms */}
-      <div className="group transform hover:scale-105 transition-all duration-300">
+      <div className="group">
         <div className="text-5xl sm:text-6xl lg:text-7xl font-black bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
-          {stats.platforms === 1 ? "1" : `${stats.platforms}+`}
+          1
         </div>
         <div className="text-gray-400 text-sm sm:text-base mt-3 uppercase tracking-widest font-medium">
-          Live Platform{stats.platforms > 1 && "s"}
+          Live Platform
         </div>
       </div>
 
       {/* Active Markets */}
-      <div className="group transform hover:scale-105 transition-all duration-300">
+      <div className="group">
         <div className="text-5xl sm:text-6xl lg:text-7xl font-black bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent">
           {stats.markets.toLocaleString()}
         </div>
@@ -92,10 +91,9 @@ export default function StatsBar({ className = "" }: { className?: string }) {
         </div>
       </div>
 
-      {/* 24h Volume — FIRE when greater than $2B */}
-      <div className="group transform hover:scale-105 transition-all duration-300">
-        <div className="text-5xl sm:text-6xl lg:text-7xl font-black bg-gradient-to-r from-amber-400 via-orange-500 to-red-600 bg-clip-text text-transparent">
-          {stats.volume24h > 2_000_000_000 ? "FIRE " : ""}
+      {/* 24h Volume — Clean, no FIRE */}
+      <div className="group">
+        <div className="text-5xl sm:text-6xl lg:text-7xl font-black bg-gradient-to-r from-amber-400 to-orange-600 bg-clip-text text-transparent">
           {formatVolume(stats.volume24h)}
         </div>
         <div className="text-gray-400 text-sm sm:text-base mt-3 uppercase tracking-widest font-medium">

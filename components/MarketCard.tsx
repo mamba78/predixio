@@ -1,4 +1,4 @@
-// components/MarketCard.tsx — THE FINAL EVOLUTION (2025 PERFECTION)
+// components/MarketCard.tsx — FINAL PERFECTION (2025 GOD MODE)
 "use client";
 
 import Link from "next/link";
@@ -27,7 +27,7 @@ export default function MarketCard({
 
   const LiquidityBar = () => (
     <div className="relative w-full h-11 md:h-12 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden shadow-inner border border-border">
-      {/* YES — Never overflows */}
+      {/* YES */}
       <div
         className="absolute inset-y-0 left-0 flex items-center text-white font-black text-sm md:text-base transition-all duration-700 ease-out"
         style={{
@@ -43,7 +43,7 @@ export default function MarketCard({
         <span className="drop-shadow-2xl">{yesPercent}¢ YES</span>
       </div>
 
-      {/* NO — Never overflows */}
+      {/* NO */}
       <div
         className="absolute inset-y-0 right-0 flex items-center text-white font-black text-sm md:text-base transition-all duration-700 ease-out"
         style={{
@@ -59,45 +59,41 @@ export default function MarketCard({
         <span className="drop-shadow-2xl">{noPercent}¢ NO</span>
       </div>
 
-      {/* Center Line */}
       <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
         <div className="w-px h-full bg-white/40 dark:bg-black/40" />
       </div>
 
-      {/* Hover glow */}
       <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ring-4 ring-primary/20" />
     </div>
   );
 
-  // LIST VIEW — Perfect one-line, DexScreener-killer, FIRE volume
+  // LIST VIEW — ELITE ONE-LINE, CATEGORY NEXT TO TITLE
   if (!isGrid) {
     return (
       <Link
         href={market.link || process.env.NEXT_PUBLIC_AFFILIATE_POLYMARKET || "https://polymarket.com"}
         target="_blank"
         rel="noopener noreferrer"
-        className="group block bg-background border border-border rounded-2xl p-5 hover:border-primary/70 transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
+        className="group block bg-background border border-border rounded-2xl p-6 hover:border-primary/70 transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
       >
-        <div className="flex items-center justify-between gap-6">
-          {/* Title + Category (perfect alignment) */}
-          <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-lg truncate text-foreground group-hover:text-primary transition">
+        <div className="flex items-center justify-between gap-8">
+          {/* Title + Real Category */}
+          <div className="flex-1 min-w-0 flex items-center gap-4">
+            <h3 className="font-bold text-xl truncate text-foreground group-hover:text-primary transition">
               {market.title || "Unknown Market"}
             </h3>
-            <div className="text-xs text-primary/80 font-medium uppercase tracking-wider">
-              {market.category || "Other"}
-            </div>
+            <span className="text-xs font-bold text-primary uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full whitespace-nowrap">
+              {market.category || "Uncategorized"}
+            </span>
           </div>
 
-          {/* Liquidity Bar */}
-          <div className="w-64 flex-shrink-0">
+          <div className="w-72 flex-shrink-0">
             <LiquidityBar />
           </div>
 
-          {/* Volume — Smaller font, FIRE when greater than $10M */}
+          {/* Volume — Clean, no FIRE */}
           <div className="text-right">
-            <span className="text-xl font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 bg-clip-text text-transparent">
-              {market.volume > 10_000_000 ? "FIRE " : ""}
+            <span className="text-xl font-black text-foreground">
               {formatVolume(market.volume)}
             </span>
           </div>
@@ -106,34 +102,28 @@ export default function MarketCard({
     );
   }
 
-  // GRID VIEW — Desktop masterpiece, smaller volume
+  // GRID VIEW — Clean volume, no FIRE
   return (
     <div className="group relative bg-background border border-border rounded-3xl p-7 hover:border-primary/70 transition-all duration-500 shadow-xl hover:shadow-2xl hover:-translate-y-3 flex flex-col h-full overflow-hidden">
-      {/* Platform + Category */}
       <div className="flex justify-between items-start mb-5">
         <span className="text-xs font-bold text-primary uppercase tracking-wider">
           {market.platform || "Polymarket"}
         </span>
         <span className="text-xs text-muted font-medium">
-          {market.category || "Other"}
+          {market.category || "Uncategorized"}
         </span>
       </div>
 
-      {/* Title */}
       <h3 className="text-xl md:text-2xl font-black text-foreground line-clamp-3 flex-1 group-hover:text-primary transition duration-300">
         {market.title || "Unknown Market"}
       </h3>
 
-      {/* Liquidity Bar */}
       <div className="my-8">
         <LiquidityBar />
       </div>
 
-      {/* Footer */}
       <div className="flex justify-between items-center pt-5 border-t border-border mt-auto">
-        {/* Volume — Smaller font in grid */}
-        <span className="text-base font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 bg-clip-text text-transparent">
-          {market.volume > 10_000_000 ? "FIRE " : ""}
+        <span className="text-base font-bold text-foreground">
           {formatVolume(market.volume)}
         </span>
 
@@ -147,7 +137,6 @@ export default function MarketCard({
         </Link>
       </div>
 
-      {/* Hover glow */}
       <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ring-8 ring-primary/10 -z-10" />
     </div>
   );
