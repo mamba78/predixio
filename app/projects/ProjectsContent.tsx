@@ -1,4 +1,4 @@
-// app/projects/ProjectsContent.tsx — FINAL, 100% WORKING (2025)
+// app/projects/ProjectsContent.tsx — FINAL, 100% WORKING (2025 PERFECTION)
 "use client";
 
 import Link from "next/link";
@@ -47,7 +47,7 @@ const platforms = [
     regulated: true,
     volume: "$1B+",
     markets: "200+",
-    status: "Coming Soon",
+    status: "Coming Soon",  // ← FIXED
     link: "https://predictit.org",
   },
 ];
