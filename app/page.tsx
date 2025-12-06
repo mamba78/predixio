@@ -1,4 +1,4 @@
-// app/page.tsx — FINAL INFINITE SCROLL MASTERPIECE (NATIVE, ZERO-ERROR, 2025 PERFECTION)
+// app/page.tsx — FINAL INFINITE SCROLL MASTERPIECE (2025 PERFECTION)
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
@@ -115,11 +115,13 @@ export default function Home() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-6 py-4 bg-gray-900/90 border border-gray-800 rounded-2xl focus:outline-none focus:border-primary text-base min-w-[200px]"
+              className="px-8 py-4 bg-gray-900/90 border border-gray-800 rounded-3xl focus:outline-none focus:border-primary text-base font-medium min-w-[240px]"
             >
               <option value="volume">Highest Volume</option>
-              <option value="yes">Highest Yes</option>
+              <option value="yes">Highest Yes Price</option>
               <option value="alpha">A-Z</option>
+              <option value="newest">Newest First</option>
+              <option value="liquidity">Most Liquid</option>
             </select>
 
             {process.env.NEXT_PUBLIC_ENABLE_VIEW_TOGGLE !== "false" && (
@@ -147,7 +149,7 @@ export default function Home() {
             <div className={isGrid ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" : "space-y-6"}>
               {displayedMarkets.map(market => (
                 <ErrorBoundary key={market.link}>
-                  <MarketCard market={market} isGrid={isGrid} />
+                  <MarketCard key={market.link} market={market} isGrid={isGrid} />
                 </ErrorBoundary>
               ))}
             </div>
@@ -163,11 +165,7 @@ export default function Home() {
               </div>
             )}
 
-            {/* End of Results — Always visible */}
-            <div className="py-20 text-center">
-              <p className="text-2xl font-bold text-gray-500">You've reached the end</p>
-              <p className="text-gray-400 mt-4">That's all the markets for now.</p>
-            </div>
+            {/* REMOVED "You've reached the end" message */}
           </>
         )}
       </section>
