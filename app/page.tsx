@@ -37,7 +37,7 @@ export default function Home() {
 
   // Fetch markets
   useEffect(() => {
-    fetch("/api/markets", { next: { revalidate: 10 } })
+    fetch("/api/markets")
       .then(r => r.json())
       .then(data => {
         setAllMarkets(data || []);
