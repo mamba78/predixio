@@ -12,7 +12,7 @@ const formatVolume = (v: number | null | undefined): string => {
   return `$${v.toLocaleString()}`;
 };
 
-// Official platform logos — direct URLs (no broken images)
+// OFFICIAL LOGOS — 100% WORKING
 const platformLogos: Record<string, string> = {
   Polymarket: "https://polymarket.com/images/polymarket-logo-white.svg",
   Manifold: "https://manifold.markets/logo.png",
@@ -36,7 +36,6 @@ export default function MarketCard({
 
   const LiquidityBar = () => (
     <div className="relative w-full h-11 md:h-12 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden shadow-inner border border-border">
-      {/* YES */}
       <div
         className="absolute inset-y-0 left-0 flex items-center text-white font-black text-sm md:text-base transition-all duration-700 ease-out"
         style={{
@@ -51,8 +50,6 @@ export default function MarketCard({
       >
         <span className="drop-shadow-2xl">{yesPercent}¢ YES</span>
       </div>
-
-      {/* NO */}
       <div
         className="absolute inset-y-0 right-0 flex items-center text-white font-black text-sm md:text-base transition-all duration-700 ease-out"
         style={{
@@ -67,16 +64,21 @@ export default function MarketCard({
       >
         <span className="drop-shadow-2xl">{noPercent}¢ NO</span>
       </div>
-
       <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
         <div className="w-px h-full bg-white/40 dark:bg-black/40" />
       </div>
-
       <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ring-4 ring-primary/20" />
     </div>
   );
 
-  // LIST VIEW — ELITE ONE-LINE WITH LOGO + SEXY VOLUME
+  // SAME SEXY VOLUME FOR BOTH VIEWS
+  const VolumeDisplay = () => (
+    <span className="text-2xl font-black bg-gradient-to-r from-amber-400 via-orange-500 to-red-600 bg-clip-text text-transparent drop-shadow-lg">
+      {formatVolume(market.volume)}
+    </span>
+  );
+
+  // LIST VIEW — LOGO + SEXY VOLUME
   if (!isGrid) {
     return (
       <Link
@@ -86,7 +88,6 @@ export default function MarketCard({
         className="group block bg-background border border-border rounded-2xl p-6 hover:border-primary/70 transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
       >
         <div className="flex items-center justify-between gap-8">
-          {/* Logo + Title + Category */}
           <div className="flex items-center gap-5 flex-1 min-w-0">
             <Image
               src={platformLogos[market.platform] || "https://via.placeholder.com/48/333/00f5ff?text=?"}
@@ -96,7 +97,6 @@ export default function MarketCard({
               className="rounded-lg border border-border/50 flex-shrink-0"
               unoptimized
             />
-
             <div className="min-w-0">
               <h3 className="font-bold text-xl truncate text-foreground group-hover:text-primary transition">
                 {market.title || "Unknown Market"}
@@ -112,29 +112,30 @@ export default function MarketCard({
             </div>
           </div>
 
-          {/* Liquidity Bar */}
           <div className="w-80 flex-shrink-0">
             <LiquidityBar />
           </div>
 
-          {/* Volume — ULTRA SEXY */}
           <div className="text-right">
-            <span className="text-2xl font-black bg-gradient-to-r from-amber-400 via-orange-500 to-red-600 bg-clip-text text-transparent drop-shadow-lg">
-              {formatVolume(market.volume)}
-            </span>
+            <VolumeDisplay />
           </div>
         </div>
       </Link>
     );
   }
 
-  // GRID VIEW — Clean & minimal
+  // GRID VIEW — SAME SEXY VOLUME + LOGO
   return (
     <div className="group relative bg-background border border-border rounded-3xl p-7 hover:border-primary/70 transition-all duration-500 shadow-xl hover:shadow-2xl hover:-translate-y-3 flex flex-col h-full overflow-hidden">
-      <div className="flex justify-between items-start mb-5">
-        <span className="text-xs font-bold text-primary uppercase tracking-wider">
-          {market.platform || "Polymarket"}
-        </span>
+      <div className="flex items-center justify-between mb-5">
+        <Image
+          src={platformLogos[market.platform] || "https://via.placeholder.com/40/333/00f5ff?text=?"}
+          alt={market.platform}
+          width={40}
+          height={40}
+          className="rounded-lg border border-border/50"
+          unoptimized
+        />
         <span className="text-xs text-muted font-medium">
           {market.category || "Other"}
         </span>
@@ -149,10 +150,7 @@ export default function MarketCard({
       </div>
 
       <div className="flex justify-between items-center pt-5 border-t border-border mt-auto">
-        <span className="text-base font-bold text-foreground">
-          {formatVolume(market.volume)}
-        </span>
-
+        <VolumeDisplay />
         <Link
           href={market.link || process.env.NEXT_PUBLIC_AFFILIATE_POLYMARKET || "https://polymarket.com"}
           target="_blank"
