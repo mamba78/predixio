@@ -10,6 +10,7 @@ import MarketCardSkeleton from "@/components/MarketCardSkeleton";
 import SearchBar from "@/components/SearchBar";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { useInView } from "react-intersection-observer";
+import Link from "next/link";
 
 type Market = {
   title: string;
@@ -19,6 +20,8 @@ type Market = {
   volume: number;
   category: string;
   link: string;
+  created_at?: number;
+  liquidity?: number;
 };
 
 const PAGE_SIZE = 30;
@@ -28,7 +31,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [isGrid, setIsGrid] = useState(true);
-  const [sortBy, setSortBy] = useState<"volume" | "yes" | "alpha">("volume");
+  const [sortBy, setSortBy] = useState<"volume" | "yes" | "alpha" | "newest" | "liquidity">("volume");
   const [loading, setLoading] = useState(true);
 
   const [displayedMarkets, setDisplayedMarkets] = useState<Market[]>([]);
@@ -59,6 +62,8 @@ export default function Home() {
         const bYes = parseFloat(b.yes_price ?? "0") || 0;
         return bYes - aYes;
       }
+      if (sortBy === "newest") return (b.created_at || 0) - (a.created_at || 0);
+      if (sortBy === "liquidity") return (b.liquidity || b.volume || 0) - (a.liquidity || a.volume || 0);
       return a.title.localeCompare(b.title);
     });
 
@@ -105,6 +110,19 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Platforms Banner */}
+      <div className="py-8 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 backdrop-blur-xl border-y border-primary/20">
+        <div className="max-w-5xl mx-auto text-center px-6">
+          <p className="text-xl text-gray-300">
+            Live data from{" "}
+            <Link href="/projects" className="font-bold text-primary hover:underline">
+              Polymarket • Manifold • Kalshi
+            </Link>{" "}
+            and more
+          </p>
+        </div>
+      </div>
+
       {/* Main Content */}
       <section className="relative z-20 max-w-7xl mx-auto px-6 pb-32">
         {/* Controls */}
@@ -115,13 +133,13 @@ export default function Home() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-8 py-4 bg-gray-900/90 border border-gray-800 rounded-3xl focus:outline-none focus:border-primary text-base font-medium min-w-[240px]"
+              className="px-8 py-4 bg-gray-900/90 border border-gray-800 rounded-3xl focus:outline-none focus:border-primary text-base font-medium min-w-[260px]"
             >
               <option value="volume">Highest Volume</option>
               <option value="yes">Highest Yes Price</option>
-              <option value="alpha">A-Z</option>
-              <option value="newest">Newest First</option>
               <option value="liquidity">Most Liquid</option>
+              <option value="newest">Newest First</option>
+              <option value="alpha">A-Z</option>
             </select>
 
             {process.env.NEXT_PUBLIC_ENABLE_VIEW_TOGGLE !== "false" && (
@@ -164,8 +182,6 @@ export default function Home() {
                 )}
               </div>
             )}
-
-            {/* REMOVED "You've reached the end" message */}
           </>
         )}
       </section>
