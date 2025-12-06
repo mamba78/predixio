@@ -1,8 +1,7 @@
-// components/MarketCard.tsx — THE FINAL EVOLUTION (2025 EDITION)
+// components/MarketCard.tsx — THE FINAL EVOLUTION (2025 PERFECTION)
 "use client";
 
 import Link from "next/link";
-import { useTheme } from "next-themes";
 
 const formatVolume = (v: number | null | undefined): string => {
   if (!v || v <= 0) return "$0";
@@ -19,9 +18,6 @@ export default function MarketCard({
   market: any;
   isGrid: boolean;
 }) {
-  const { resolvedTheme } = useTheme();
-
-  // 100% safe price parsing — survives malformed API data
   const rawYes = parseFloat(market.yes_price ?? "0") || 0;
   const rawNo = parseFloat(market.no_price ?? "0") || 0;
   const total = rawYes + rawNo;
@@ -30,30 +26,34 @@ export default function MarketCard({
   const noPercent = 100 - yesPercent;
 
   const LiquidityBar = () => (
-    <div className="relative w-full h-11 md:h-12 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden shadow-inner border border-gray-300 dark:border-gray-700">
-      {/* YES */}
+    <div className="relative w-full h-11 md:h-12 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden shadow-inner border border-border">
+      {/* YES — Never overflows */}
       <div
-        className="absolute inset-y-0 left-0 flex items-center justify-center text-white font-black text-sm md:text-base transition-all duration-700 ease-out px-3 whitespace-nowrap"
+        className="absolute inset-y-0 left-0 flex items-center text-white font-black text-sm md:text-base transition-all duration-700 ease-out"
         style={{
           width: `${yesPercent}%`,
-          background:
-            yesPercent >= 50
-              ? "linear-gradient(90deg, #10b981, #34d399)"
-              : "linear-gradient(90deg, #34d399, #6ee7b7)",
+          minWidth: yesPercent < 25 ? "72px" : "auto",
+          justifyContent: yesPercent < 25 ? "flex-start" : "center",
+          paddingLeft: yesPercent < 25 ? "12px" : "0",
+          background: yesPercent >= 50
+            ? "linear-gradient(90deg, #10b981, #34d399)"
+            : "linear-gradient(90deg, #34d399, #6ee7b7)",
         }}
       >
         <span className="drop-shadow-2xl">{yesPercent}¢ YES</span>
       </div>
 
-      {/* NO */}
+      {/* NO — Never overflows */}
       <div
-        className="absolute inset-y-0 right-0 flex items-center justify-center text-white font-black text-sm md:text-base transition-all duration-700 ease-out px-3 whitespace-nowrap"
+        className="absolute inset-y-0 right-0 flex items-center text-white font-black text-sm md:text-base transition-all duration-700 ease-out"
         style={{
           width: `${noPercent}%`,
-          background:
-            noPercent >= 50
-              ? "linear-gradient(90deg, #ef4444, #f87171)"
-              : "linear-gradient(90deg, #f87171, #fca5a5)",
+          minWidth: noPercent < 25 ? "72px" : "auto",
+          justifyContent: noPercent < 25 ? "flex-end" : "center",
+          paddingRight: noPercent < 25 ? "12px" : "0",
+          background: noPercent >= 50
+            ? "linear-gradient(90deg, #ef4444, #f87171)"
+            : "linear-gradient(90deg, #f87171, #fca5a5)",
         }}
       >
         <span className="drop-shadow-2xl">{noPercent}¢ NO</span>
@@ -69,52 +69,37 @@ export default function MarketCard({
     </div>
   );
 
-  // LIST VIEW — Mobile-first, DexScreener-killer
+  // LIST VIEW — One-line, DexScreener-killer, FIRE volume
   if (!isGrid) {
     return (
       <Link
         href={market.link || "https://polymarket.com"}
         target="_blank"
         rel="noopener noreferrer"
-        className="group block bg-white dark:bg-gray-900/95 border border-gray-300 dark:border-gray-700 rounded-2xl p-5 hover:border-primary/70 dark:hover:border-primary/60 transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
+        className="group block bg-background border border-border rounded-2xl p-5 hover:border-primary/70 transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
       >
-        <div className="flex flex-col gap-4">
-          {/* Header */}
-          <div className="flex items-center justify-between text-xs font-medium">
-            <div className="flex items-center gap-2">
-              <span className="text-primary font-bold">
-                {market.platform || "Polymarket"}
-              </span>
-              <span className="text-gray-500 dark:text-gray-400">•</span>
-              <span className="text-cyan-400">
-                {market.category || "Other"}
-              </span>
+        <div className="flex items-center justify-between gap-6">
+          {/* Title + Category */}
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-lg truncate text-foreground group-hover:text-primary transition">
+              {market.title || "Unknown Market"}
+            </h3>
+            <div className="text-sm text-primary font-medium">
+              {market.category || "Other"}
             </div>
-            <span className="hidden sm:block text-gray-500 dark:text-gray-400">
-              {formatVolume(market.volume)}
-            </span>
           </div>
 
-          {/* Title */}
-          <h3 className="font-bold text-lg text-gray-900 dark:text-white group-hover:text-primary transition line-clamp-2">
-            {market.title || "Unknown Market"}
-          </h3>
-
           {/* Liquidity Bar */}
-          <div className="my-2">
+          <div className="w-64 flex-shrink-0">
             <LiquidityBar />
           </div>
 
-          {/* CTA — Now fully clickable */}
-          <div className="flex justify-end mt-2">
-            <Link
-              href={market.link || "https://polymarket.com"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 bg-gradient-to-r from-primary to-accent text-black font-bold rounded-full text-sm hover:scale-110 active:scale-95 transition-all duration-200 shadow-xl inline-block"
-            >
-              Trade Now
-            </Link>
+          {/* Volume — FIRE when greater than $10M */}
+          <div className="text-right">
+            <span className="text-2xl font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 bg-clip-text text-transparent">
+              {market.volume > 10_000_000 ? "FIRE " : ""}
+              {formatVolume(market.volume)}
+            </span>
           </div>
         </div>
       </Link>
@@ -123,19 +108,19 @@ export default function MarketCard({
 
   // GRID VIEW — Desktop masterpiece
   return (
-    <div className="group relative bg-white dark:bg-gray-900/95 border border-gray-300 dark:border-gray-700 rounded-3xl p-7 hover:border-primary/70 dark:hover:border-primary/60 transition-all duration-500 shadow-xl hover:shadow-2xl hover:-translate-y-3 flex flex-col h-full overflow-hidden">
+    <div className="group relative bg-background border border-border rounded-3xl p-7 hover:border-primary/70 transition-all duration-500 shadow-xl hover:shadow-2xl hover:-translate-y-3 flex flex-col h-full overflow-hidden">
       {/* Platform + Category */}
       <div className="flex justify-between items-start mb-5">
         <span className="text-xs font-bold text-primary uppercase tracking-wider">
           {market.platform || "Polymarket"}
         </span>
-        <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+        <span className="text-xs text-muted font-medium">
           {market.category || "Other"}
         </span>
       </div>
 
       {/* Title */}
-      <h3 className="text-xl md:text-2xl font-black text-gray-900 dark:text-white line-clamp-3 flex-1 group-hover:text-primary transition duration-300">
+      <h3 className="text-xl md:text-2xl font-black text-foreground line-clamp-3 flex-1 group-hover:text-primary transition duration-300">
         {market.title || "Unknown Market"}
       </h3>
 
@@ -145,10 +130,12 @@ export default function MarketCard({
       </div>
 
       {/* Footer */}
-      <div className="flex justify-between items-center pt-5 border-t border-gray-300 dark:border-gray-700 mt-auto">
-        <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+      <div className="flex justify-between items-center pt-5 border-t border-border mt-auto">
+        <span className="text-lg font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 bg-clip-text text-transparent">
+          {market.volume > 10_000_000 ? "FIRE " : ""}
           {formatVolume(market.volume)}
         </span>
+
         <Link
           href={market.link || "https://polymarket.com"}
           target="_blank"
@@ -159,7 +146,7 @@ export default function MarketCard({
         </Link>
       </div>
 
-      {/* Hover glow ring */}
+      {/* Hover glow */}
       <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ring-8 ring-primary/10 -z-10" />
     </div>
   );

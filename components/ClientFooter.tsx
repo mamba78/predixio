@@ -1,45 +1,82 @@
-// components/ClientFooter.tsx
+// components/ClientFooter.tsx — RESPONSIVE GOD MODE
 "use client";
 
+import Link from "next/link";
 import { useModal } from "@/components/LegalModal";
 
 export default function ClientFooter() {
   const { setOpen } = useModal();
 
   return (
-    <footer className="border-t border-gray-800 py-8 text-center text-sm text-gray-500">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-wrap justify-center gap-6 mb-4">
-          <button
-            onClick={() => setOpen("terms")}
-            className="hover:text-cyan-400 transition-colors duration-200 focus-visible:outline-none focus-visible:text-cyan-400"
-            aria-label="View Terms of Service"
+    <footer className="border-t border-gray-800 py-6 text-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Desktop: Horizontal layout */}
+        <div className="hidden md:flex flex-wrap justify-center items-center gap-x-8 gap-y-4 mb-4 font-medium text-sm">
+          <Link href="/" className="hover:text-primary transition font-bold tracking-wider">
+            Markets
+          </Link>
+          <button onClick={() => setOpen("about")} className="hover:text-primary transition">
+            About
+          </button>
+          <a
+            href="https://twitter.com/predixio"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 hover:text-primary transition"
           >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+            Twitter
+          </a>
+          <button onClick={() => setOpen("terms")} className="hover:text-primary transition">
             Terms
           </button>
-          <button
-            onClick={() => setOpen("privacy")}
-            className="hover:text-cyan-400 transition-colors duration-200 focus-visible:outline-none focus-visible:text-cyan-400"
-            aria-label="View Privacy Policy"
-          >
+          <button onClick={() => setOpen("privacy")} className="hover:text-primary transition">
             Privacy
           </button>
-          <button
-            onClick={() => setOpen("cookies")}
-            className="hover:text-cyan-400 transition-colors duration-200 focus-visible:outline-none focus-visible:text-cyan-400"
-            aria-label="View Cookie Policy"
-          >
-            Cookies
-          </button>
-          <button
-            onClick={() => setOpen("disclaimer")}
-            className="hover:text-cyan-400 transition-colors duration-200 focus-visible:outline-none focus-visible:text-cyan-400"
-            aria-label="View Disclaimer"
-          >
+          <button onClick={() => setOpen("disclaimer")} className="hover:text-primary transition">
             Disclaimer
           </button>
         </div>
-        <p className="text-xs opacity-80">
+
+        {/* Mobile: Stacked + compact */}
+        <div className="md:hidden flex flex-col items-center gap-4 mb-4 text-xs">
+          <div className="flex items-center gap-6">
+            <Link href="/" className="hover:text-primary transition font-bold">
+              Markets
+            </Link>
+            <button onClick={() => setOpen("about")} className="hover:text-primary transition">
+              About
+            </button>
+            <a
+              href="https://twitter.com/predixio"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 hover:text-primary transition"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+            </a>
+          </div>
+          <div className="flex items-center gap-4 text-gray-400">
+            <button onClick={() => setOpen("terms")} className="hover:text-primary transition">
+              Terms
+            </button>
+            <span>•</span>
+            <button onClick={() => setOpen("privacy")} className="hover:text-primary transition">
+              Privacy
+            </button>
+            <span>•</span>
+            <button onClick={() => setOpen("disclaimer")} className="hover:text-primary transition">
+              Disclaimer
+            </button>
+          </div>
+        </div>
+
+        {/* Copyright — always visible */}
+        <p className="text-xs text-gray-500 opacity-70 tracking-wider">
           © 2025 Predixio • Not financial advice • 18+
         </p>
       </div>

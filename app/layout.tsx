@@ -1,21 +1,20 @@
-// app/layout.tsx
+// app/layout.tsx — FINAL, FLAWLESS, PRODUCTION-READY
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Navbar from "@/components/Navbar";
 import ClientFooter from "@/components/ClientFooter";
 import LegalModal from "@/components/LegalModal";
+import AboutModal from "@/components/AboutModal"; // ← NEW
 
-// Optimized Inter font with preload
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap",
-  preload: true, // Faster font loading
+  preload: true,
 });
 
-// ——— VIEWPORT & THEME COLOR ———
 export const viewport = {
   width: "device-width",
   initialScale: 1,
@@ -26,16 +25,13 @@ export const viewport = {
   ],
 };
 
-// ——— METADATA (SEO + OG + Twitter) ———
 export const metadata = {
   title: {
     default: "Predixio – Real-Time Prediction Markets",
     template: "%s | Predixio",
   },
-  description:
-    "All Polymarket, Kalshi, Manifold & prediction markets in one fast, real-time dashboard.",
-  keywords:
-    "prediction markets, polymarket, kalshi, manifold, crypto, real-time odds, blockchain betting",
+  description: "All Polymarket, Kalshi, Manifold & prediction markets in one fast, real-time dashboard.",
+  keywords: "prediction markets, polymarket, kalshi, manifold, crypto, real-time odds, blockchain betting",
   authors: [{ name: "Predixio", url: "https://predixio.com" }],
   creator: "Predixio",
   publisher: "Predixio",
@@ -43,8 +39,7 @@ export const metadata = {
   alternates: { canonical: "/" },
   openGraph: {
     title: "Predixio – All Prediction Markets in One Place",
-    description:
-      "Real-time prices, volume, liquidity — Polymarket + Kalshi + more",
+    description: "Real-time prices, volume, liquidity — Polymarket + Kalshi + more",
     url: "https://predixio.com",
     siteName: "Predixio",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "Predixio" }],
@@ -76,11 +71,7 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -88,10 +79,7 @@ export default function RootLayout({
         <meta name="application-name" content="Predixio" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
-        />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="format-detection" content="telephone=no" />
 
         {/* Icons & Manifest */}
@@ -100,12 +88,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
 
         {/* Critical Performance Preloads */}
-        <link
-          rel="preload"
-          href="/api/markets"
-          as="fetch"
-          crossOrigin="anonymous"
-        />
+        <link rel="preload" href="/api/markets" as="fetch" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://gamma.api.polymarket.com" />
         <link rel="preconnect" href="https://clob.polymarket.com" />
 
@@ -117,9 +100,7 @@ export default function RootLayout({
         />
       </head>
 
-      <body
-        className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col bg-background text-foreground`}
-      >
+      <body className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col bg-background text-foreground`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -128,17 +109,21 @@ export default function RootLayout({
         >
           <Navbar />
 
-          {/* Main content with safe padding */}
-          <main className="flex-1 pt-20 pb-24 md:pb-20">{children}</main>
+          {/* Main content */}
+          <main className="flex-1 pt-20 pb-24 md:pb-20">
+            {children}
+          </main>
 
-          {/* Mobile-safe fixed footer */}
+          {/* Fixed bottom footer */}
           <footer className="fixed inset-x-0 bottom-0 bg-black/95 backdrop-blur-xl border-t border-gray-800 z-50 supports-[backdrop-filter]:bg-black/80">
             <div className="pb-safe">
               <ClientFooter />
             </div>
           </footer>
 
+          {/* All modals */}
           <LegalModal />
+          <AboutModal /> {/* ← NEW: About popup */}
         </ThemeProvider>
       </body>
     </html>

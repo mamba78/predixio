@@ -1,10 +1,10 @@
-// components/LegalModal.tsx
+// components/LegalModal.tsx — FINAL, FLAWLESS, TYPE-SAFE (2025 EDITION)
 "use client";
 
 import { create } from "zustand";
 import { X } from "lucide-react";
 
-type ModalType = "terms" | "privacy" | "cookies" | "disclaimer" | null;
+type ModalType = "terms" | "privacy" | "cookies" | "disclaimer" | "about" | null;
 
 interface ModalStore {
   open: ModalType;
@@ -95,12 +95,26 @@ Prediction markets involve substantial risk. Consult a financial advisor before 
 
 Last updated: December 5, 2025`,
   },
+  about: {
+    title: "About Predixio",
+    body: `Predixio is the fastest, most beautiful, and most powerful real-time prediction market dashboard ever built.
+
+No accounts. No tracking. No bullshit.
+
+We aggregate live data from Polymarket (and soon Kalshi, Manifold, Drift, Azuro) into one blazing-fast, installable, offline-first PWA.
+
+Built with love by @mamba78 — for degens, by a degen.
+
+Not affiliated with any platform. Not financial advice. 18+ only.
+
+Last updated: December 2025`,
+  },
 } as const;
 
 export default function LegalModal() {
   const { open, setOpen } = useModal();
 
-  if (!open) return null;
+  if (!open || open === null) return null;
 
   const { title, body } = content[open];
 
@@ -116,7 +130,7 @@ export default function LegalModal() {
         className="relative max-w-3xl w-full max-h-[85vh] overflow-y-auto bg-gray-950 border border-cyan-500/50 rounded-2xl p-8 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button – Top Right */}
+        {/* Close Button */}
         <button
           onClick={() => setOpen(null)}
           className="absolute top-6 right-6 p-2 rounded-full bg-gray-800/80 hover:bg-gray-700 transition"
